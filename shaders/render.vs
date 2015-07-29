@@ -10,6 +10,6 @@ uniform mat4 mvp;
 
 void main()
 {
-    vertexPosition = position;
-    //vertexPosition = mvp * vec4(position, 1.0f);
+    //vertexPosition = position;
+    vertexPosition = vec3(mvp * vec4(position, 1.0f));
 }

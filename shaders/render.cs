@@ -13,9 +13,13 @@ void main()
     controlPosition[INV_ID] = vertexPosition[INV_ID];
     if (INV_ID == 0)
     {
-        gl_TessLevelInner[0] = innerTL;
+        gl_TessLevelInner[0] = 3;
+        gl_TessLevelOuter[0] = 2;
+        gl_TessLevelOuter[1] = 2;
+        gl_TessLevelOuter[2] = 2;
+        /*gl_TessLevelInner[0] = innerTL;
         gl_TessLevelOuter[0] = outerTL;
         gl_TessLevelOuter[1] = outerTL;
-        gl_TessLevelOuter[2] = outerTL;
+        gl_TessLevelOuter[2] = outerTL;*/
     }
 }
