@@ -35,14 +35,8 @@ public:
     void strafeRight();
 
     glm::mat4 getCurrentMVP();
-
-    void loadSky(QString path);
-    void loadTerrain();
-    Mesh* loadTree(QString path);
     void loadModel(QString path);
     void loadLight();
-    void loadForest(uint size);
-
     void loadScene();
     void loadValidationScene();
 

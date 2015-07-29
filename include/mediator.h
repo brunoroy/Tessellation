@@ -22,19 +22,8 @@ public:
 
 public slots:
     void showShaders(bool value);
-    void toggleVLS(bool value);
-    void toggleBloom(bool value);
     void defaultValues();
     void saveSnapshot();
-
-    void setExposure(int value);
-    void setDecay(int value);
-    void setDensity(int value);
-    void setWeight(int value);
-    void setSamples(int value);
-
-    void setThreshold(int value);
-
     void about();
 
 private:
@@ -44,7 +33,6 @@ private:
     Ui_MainWindow _userInterface;
 
     float getValue(int value);
-    //void transmitUniform()
 };
 
 #endif // MEDIATOR_H

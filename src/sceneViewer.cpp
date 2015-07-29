@@ -35,16 +35,6 @@ void SceneViewer::init()
     _scene->initialize(1024, 768, VALIDATION);
     _renderer->initialize(_scene.get());
 
-    Shaders::getShader("lightShaftsPass1")->bind();
-    Shaders::getShader("lightShaftsPass1")->transmitUniform("exposure", _userInterface->eExposure->text().toFloat());
-    Shaders::getShader("lightShaftsPass1")->transmitUniform("decay", _userInterface->eDecay->text().toFloat());
-    Shaders::getShader("lightShaftsPass1")->transmitUniform("density", _userInterface->eDensity->text().toFloat());
-    Shaders::getShader("lightShaftsPass1")->transmitUniform("weight", _userInterface->eWeight->text().toFloat());
-    Shaders::getShader("lightShaftsPass1")->transmitUniform("samples", _userInterface->eSamples->text().toInt());
-
-    Shaders::getShader("bloomPass1")->bind();
-    Shaders::getShader("bloomPass1")->transmitUniform("threshold", _userInterface->eThreshold->text().toFloat());
-
     this->startAnimation();
     _isInitialized = true;
 }
