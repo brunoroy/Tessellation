@@ -36,8 +36,16 @@ void SceneViewer::init()
     _scene->initialize(1024, 768);
     _renderer->initialize(_scene.get());
 
-    //this->startAnimation();
+    initializeTS();
+
     _isInitialized = true;
+}
+
+void SceneViewer::initializeTS()
+{
+    GLint maxPatchVertices = 0;
+    glGetIntegerv(GL_MAX_PATCH_VERTICES, &maxPatchVertices);
+    printf("Max supported patch vertices %d.\n", maxPatchVertices);
 }
 
 bool SceneViewer::isReady()

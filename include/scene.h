@@ -35,7 +35,7 @@ public:
     void strafeRight();
 
     glm::mat4 getCurrentMVP();
-    void loadModel(QString path);
+    void loadModel(std::string path);
     void loadLight();
     void loadScene();
 

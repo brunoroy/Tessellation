@@ -76,11 +76,11 @@ void Scene::resize(uint width, uint height)
     _camera->setAspectRatio(width/height);
 }
 
-void Scene::loadModel(QString path)
+void Scene::loadModel(std::string path)
 {
     Texture::resetUnit();
     Texture* basicTexture = Texture::newFromNextUnit();
-    Mesh* mesh = new Mesh(path);
+    Mesh* mesh = new Mesh(QString(path.c_str()));
     basicTexture->load("data/textures/white.jpg");
     basicTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
     basicTexture->initialize();

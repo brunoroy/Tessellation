@@ -109,10 +109,7 @@ void Mesh::draw()
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indiceBuffer);
-    if (!_invertNormals)
-        glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-    else
-        glDrawElements(GL_QUADS, _indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
@@ -198,8 +195,10 @@ bool Mesh::loadObject(QString filename)
     {
         _indices.push_back(i);
         _positions.push_back(positions.at(_indicePolygons.at(i).vertex));
-        _textureCoordinates.push_back(textureCoordinates.at(_indicePolygons.at(i).uv));
-        _normals.push_back(normals.at(_indicePolygons.at(i).normal));
+        if (!textureCoordinates.empty())
+            _textureCoordinates.push_back(textureCoordinates.at(_indicePolygons.at(i).uv));
+        if (!normals.empty())
+            _normals.push_back(normals.at(_indicePolygons.at(i).normal));
     }
 
     _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));

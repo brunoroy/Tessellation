@@ -7,7 +7,6 @@ Mediator::Mediator()
     _userInterface.setupUi(_mainWindow.get());
 
     QGLFormat glFormat;
-    //glFormat.setProfile(QGLFormat::CoreProfile);
     glFormat.setDepth(true);
     glFormat.setRgba(true);
     glFormat.setDoubleBuffer(true);
@@ -69,7 +68,7 @@ void Mediator::defaultValues()
 void Mediator::saveSnapshot()
 {
     QDir savesFolder("data/saves/");
-    uint id = savesFolder.entryList().size();
+    uint id = savesFolder.entryList().size()-1;
     _sceneViewer->saveSnapshot(QString("data/saves/image%1.jpg").arg(id));
 }
 
