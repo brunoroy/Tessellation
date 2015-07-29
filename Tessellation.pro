@@ -11,7 +11,7 @@ FORMS += gui/mainWindow.ui
 OTHER_FILES += shaders/*.vs shaders/*.fs
 
 INCLUDEPATH += include $$HOME_LOCAL/include
-LIBS += -L/usr/lib/ -lGL -lGLEW
+LIBS += -L/usr/lib64 -lGL -lGLEW
 LIBS += -L$$HOME_LOCAL/lib -lQGLViewer
 
 DESTDIR = .
