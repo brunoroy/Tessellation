@@ -22,9 +22,6 @@ public:
     void drawPlane();
     bool isReady();
 
-    void toggleVLS(bool value) {_renderer->toggleVLS(value);}
-    void toggleBloom(bool value) {_renderer->toggleBloom(value);}
-
     void initializeTS();
 
 protected:

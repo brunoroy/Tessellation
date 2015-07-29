@@ -11,8 +11,11 @@
 Shader::Shader(QString value, QString filename)
 {
     _value = value;
-    _vertexFilename = QString(filename).append(".vs");
-    _fragmentFilename = QString(filename).append(".fs");
+    _shaderFilenames.append(QString(filename).append(".vs"));
+    _shaderFilenames.append(QString(filename).append(".cs"));
+    _shaderFilenames.append(QString(filename).append(".es"));
+    _shaderFilenames.append(QString(filename).append(".gs"));
+    _shaderFilenames.append(QString(filename).append(".fs"));
 }
 
 Shader::~Shader()
@@ -42,48 +45,35 @@ char* Shader::loadShaderFile(QString path)
 
 void Shader::load(QStringList attributes, QStringList uniforms)
 {
-    _shaderId[0] = glCreateShader(GL_VERTEX_SHADER);
-    _shaderId[1] = glCreateShader(GL_FRAGMENT_SHADER);
+    _shaderIds.push_back(glCreateShader(GL_VERTEX_SHADER));
+    _shaderIds.push_back(glCreateShader(GL_TESS_CONTROL_SHADER));
+    _shaderIds.push_back(glCreateShader(GL_TESS_EVALUATION_SHADER));
+    _shaderIds.push_back(glCreateShader(GL_GEOMETRY_SHADER));
+    _shaderIds.push_back(glCreateShader(GL_FRAGMENT_SHADER));
 
     GLint result = GL_FALSE;
     int infoLogLength;
 
-    const char* vertexSourcePointer = loadShaderFile(_vertexFilename.toLatin1());
-    //std::clog << "vertex: " << vertexSourcePointer << std::endl;
-    glShaderSource(_shaderId[0], 1, &vertexSourcePointer, NULL);
-    glCompileShader(_shaderId[0]);
-
-    glGetShaderiv(_shaderId[0], GL_COMPILE_STATUS, &result);
-    glGetShaderiv(_shaderId[0], GL_INFO_LOG_LENGTH, &infoLogLength);
-    std::vector<char> vertexShaderErrorMessage(infoLogLength);
-    glGetShaderInfoLog(_shaderId[0], infoLogLength, NULL, &vertexShaderErrorMessage[0]);
-
-    if (vertexShaderErrorMessage[0] != NULL)
-    {
-        std::vector<char> vertexShaderErrorMessage(infoLogLength+1);
-        glGetShaderInfoLog(_shaderId[0], infoLogLength, NULL, &vertexShaderErrorMessage[0]);
-        std::cout << &vertexShaderErrorMessage[0] << std::endl;
-    }
-
-    const char* fragmentSourcePointer = loadShaderFile(_fragmentFilename.toLatin1());
-    glShaderSource(_shaderId[1], 1, &fragmentSourcePointer , NULL);
-    glCompileShader(_shaderId[1]);
-
-    glGetShaderiv(_shaderId[1], GL_COMPILE_STATUS, &result);
-    glGetShaderiv(_shaderId[1], GL_INFO_LOG_LENGTH, &infoLogLength);
-    std::vector<char> fragmentShaderErrorMessage(infoLogLength);
-    glGetShaderInfoLog(_shaderId[1], infoLogLength, NULL, &fragmentShaderErrorMessage[0]);
-
-    if (fragmentShaderErrorMessage[0] != NULL)
-    {
-        std::vector<char> fragmentShaderErrorMessage(infoLogLength+1);
-        glGetShaderInfoLog(_shaderId[1], infoLogLength, NULL, &fragmentShaderErrorMessage[0]);
-        std::cout << &fragmentShaderErrorMessage[0] << std::endl;
-    }
-
     _programId = glCreateProgram();
-    glAttachShader(_programId, _shaderId[0]);
-    glAttachShader(_programId, _shaderId[1]);
+    for (size_t i = 0; i < _shaderIds.size(); i++)
+    {
+        const char* shaderSourcePointer = loadShaderFile(_shaderFilenames.at(i).toLatin1());
+        glShaderSource(_shaderIds[i], 1, &shaderSourcePointer, NULL);
+        glCompileShader(_shaderIds[i]);
+
+        glGetShaderiv(_shaderIds[i], GL_COMPILE_STATUS, &result);
+        glGetShaderiv(_shaderIds[i], GL_INFO_LOG_LENGTH, &infoLogLength);
+        std::vector<char> shaderErrorMessage(infoLogLength);
+        glGetShaderInfoLog(_shaderIds[i], infoLogLength, NULL, &shaderErrorMessage[0]);
+
+        if (shaderErrorMessage[0] != NULL)
+        {
+            std::vector<char> shaderErrorMessage(infoLogLength+1);
+            glGetShaderInfoLog(_shaderIds[i], infoLogLength, NULL, &shaderErrorMessage[0]);
+            std::cout << &shaderErrorMessage[0] << std::endl;
+        }
+        glAttachShader(_programId, _shaderIds[i]);
+    }
     glLinkProgram(_programId);
 
     glGetProgramiv(_programId, GL_LINK_STATUS, &result);
@@ -99,10 +89,12 @@ void Shader::load(QStringList attributes, QStringList uniforms)
     }
 
     _matrixId = glGetUniformLocation(_programId, "mvp");
-    //std::clog << "matrixId: " << _matrixId << std::endl;
 
-    glDeleteShader(_shaderId[0]);
-    glDeleteShader(_shaderId[1]);
+    glDeleteShader(_shaderIds[0]);
+    glDeleteShader(_shaderIds[1]);
+    glDeleteShader(_shaderIds[2]);
+    glDeleteShader(_shaderIds[3]);
+    glDeleteShader(_shaderIds[4]);
 
     bind();
     foreach (QString attribute, attributes)

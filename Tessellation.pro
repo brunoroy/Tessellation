@@ -8,7 +8,7 @@ TEMPLATE = app
 HEADERS += include/*.h
 SOURCES += src/*.cpp
 FORMS += gui/mainWindow.ui
-OTHER_FILES += shaders/*.vs shaders/*.fs
+OTHER_FILES += shaders/render.*
 
 INCLUDEPATH += include $$HOME_LOCAL/include
 LIBS += -L/usr/lib64 -lGL -lGLEW

@@ -39,10 +39,9 @@ public:
 
 private:
     QString _value;
-    QString _vertexFilename;
-    QString _fragmentFilename;
+    QStringList _shaderFilenames;
 
-    GLuint _shaderId[2];
+    std::vector<GLuint> _shaderIds;
     GLint _shaderLocation[2];
     GLuint _programId;
     GLuint _matrixId;

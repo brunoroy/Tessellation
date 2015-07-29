@@ -10,9 +10,7 @@
 #include "shader.h"
 
 Renderer::Renderer():
-    _initialized(false),
-    _useBloom(true),
-    _useLightShafts(true)
+    _initialized(false)
 {
     loadShaders();
 }

@@ -15,9 +15,6 @@ public:
     void resize(int width, int height);
     bool isInitialized() {return _initialized;}
 
-    void toggleBloom(bool value) {_useBloom = value;}
-    void toggleVLS(bool value) {_useLightShafts = value;}
-
     void render();
     void getModelViewProjectionMatrix(GLfloat matrix[16]);
 
@@ -27,8 +24,6 @@ protected:
 private:
     float _width, _height;
     bool _initialized;
-    bool _useLightShafts;
-    bool _useBloom;
 
     qglviewer::Camera *_camera;
     Scene *_scene;
