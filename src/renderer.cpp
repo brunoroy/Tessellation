@@ -39,7 +39,7 @@ void Renderer::resize(int width, int height)
 
 void Renderer::loadShaders()
 {
-    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal", QStringList() << "mvp" << "textureDiffuse" << "textureAlpha");
+    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal", QStringList() << "mvp" << "textureDiffuse");
 }
 
 void Renderer::render()

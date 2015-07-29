@@ -13,7 +13,6 @@ Mesh::Mesh():
     _rotation(1.0f),
     _scaling(1.0f),
     _objModel(false),
-    _invertNormals(false),
     _mvp(glm::mat4(1.0f))
 {
 }
@@ -23,11 +22,11 @@ Mesh::Mesh(Mesh *mesh)
     *this = mesh;
 }
 
-Mesh::Mesh(QString filename, bool invertNormals)
+Mesh::Mesh(QString filename)
 {
     if (!filename.isEmpty())
     {
-        loadObject(filename, invertNormals);
+        loadObject(filename);
         _objModel = true;
     }
 }
@@ -121,10 +120,8 @@ void Mesh::draw()
 }
 
 //from Nori educational ray tracer
-bool Mesh::loadObject(QString filename, bool invertNormals)
+bool Mesh::loadObject(QString filename)
 {
-    _invertNormals = invertNormals;
-
     typedef boost::unordered_map<OBJVertex, uint32_t, OBJVertexHash> VertexMap;
 
     QFile input(filename);
@@ -202,53 +199,10 @@ bool Mesh::loadObject(QString filename, bool invertNormals)
         _indices.push_back(i);
         _positions.push_back(positions.at(_indicePolygons.at(i).vertex));
         _textureCoordinates.push_back(textureCoordinates.at(_indicePolygons.at(i).uv));
-
-        if (invertNormals)
-        {
-            glm::vec3 normal = -1.0f * normals.at(_indicePolygons.at(i).normal);
-            _normals.push_back(normal);
-        }
-        else
-            _normals.push_back(normals.at(_indicePolygons.at(i).normal));
+        _normals.push_back(normals.at(_indicePolygons.at(i).normal));
     }
 
-    if (!invertNormals)
-        _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
-
-    if (invertNormals)
-    {
-        _indices.clear();
-        _positions.clear();
-        _normals.clear();
-        _textureCoordinates.clear();
-
-        float size = 1.0f;
-        float vertices[] = {
-          -size,  size,  size,
-          -size, -size,  size,
-           size, -size,  size,
-           size,  size,  size,
-          -size,  size, -size,
-          -size, -size, -size,
-           size, -size, -size,
-           size,  size, -size,
-        };
-
-         int indices[] = {
-            0, 1, 2, 3,
-            3, 2, 6, 7,
-            7, 6, 5, 4,
-            4, 5, 1, 0,
-            0, 3, 7, 4,
-            1, 2, 6, 5,
-        };
-
-        for (uint i = 0; i < 24; i++)
-            _indices.push_back(indices[i]);
-
-        for (uint i = 0; i < 8; i++)
-            _positions.push_back(glm::vec3(vertices[i*3],vertices[i*3+1],vertices[i*3+2]));
-    }
+    _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
     return true;
 }

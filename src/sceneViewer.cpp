@@ -3,7 +3,7 @@
 
 #include <QKeyEvent>
 
-#define VALIDATION 0
+#define USE_KEYBOARD 0
 
 SceneViewer::SceneViewer(Ui_MainWindow *userInterface, QGLFormat glFormat):
     QGLViewer(glFormat),
@@ -23,19 +23,20 @@ void SceneViewer::init()
     setSceneCenter(Vec(0.0, 0.0, 0.0));
     setBackgroundColor(Qt::black);
 
-    setMouseBinding(Qt::NoModifier, Qt::LeftButton, CAMERA, LOOK_AROUND);
-    setMouseBinding(Qt::NoModifier, Qt::RightButton, NO_CLICK_ACTION);
-    setWheelBinding(Qt::NoModifier, CAMERA, NO_MOUSE_ACTION);
+    //setMouseBinding(Qt::NoModifier, Qt::LeftButton, CAMERA, LOOK_AROUND);
+    //setMouseBinding(Qt::NoModifier, Qt::RightButton, NO_CLICK_ACTION);
+    //setWheelBinding(Qt::NoModifier, CAMERA, NO_MOUSE_ACTION);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glewExperimental = GL_TRUE;
     glewInit();
 
     _renderer.reset(new Renderer());
     _scene.reset(new Scene(this->camera()));
-    _scene->initialize(1024, 768, VALIDATION);
+    _scene->initialize(1024, 768);
     _renderer->initialize(_scene.get());
 
-    this->startAnimation();
+    //this->startAnimation();
     _isInitialized = true;
 }
 
@@ -54,7 +55,7 @@ void SceneViewer::resizeGL(int width, int height)
 
 void SceneViewer::animate()
 {
-    _userInterface->statusBar->showMessage(QString("camera: {").append(QString::number(_scene->getCamera()->position().x)).append(", ").append(QString::number(_scene->getCamera()->position().y)).append(", ").append(QString::number(_scene->getCamera()->position().z)).append("}"));
+    //_userInterface->statusBar->showMessage(QString("camera: {").append(QString::number(_scene->getCamera()->position().x)).append(", ").append(QString::number(_scene->getCamera()->position().y)).append(", ").append(QString::number(_scene->getCamera()->position().z)).append("}"));
     //_userInterface->statusBar->showMessage(QString("FPS: ").append(QString::number(static_cast<int>(this->currentFPS()))));
 }
 
@@ -65,6 +66,7 @@ void SceneViewer::draw()
 
 void SceneViewer::keyPressEvent(QKeyEvent* event)
 {
+#if USE_KEYBOARD
     switch (event->key())
     {
         case Qt::Key_W:
@@ -81,4 +83,5 @@ void SceneViewer::keyPressEvent(QKeyEvent* event)
         break;
     }
     updateGL();
+#endif
 }

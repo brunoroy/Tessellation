@@ -97,10 +97,10 @@ class Mesh
 public:
     Mesh();
     Mesh(Mesh* mesh);
-    Mesh(QString filename, bool invertNormals = false);
+    Mesh(QString filename);
     ~Mesh();
 
-    bool loadObject(QString filename, bool invertNormals);
+    bool loadObject(QString filename);
     void addVertex(Vertex vertex)
     {
         _positions.push_back(vertex.getPosition());

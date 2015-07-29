@@ -14,7 +14,7 @@ public:
     Scene(Camera *camera);
     ~Scene();
 
-    void initialize(uint width, uint height, bool validation = false);
+    void initialize(uint width, uint height);
     void draw();
     void updateConstraints();
     glm::mat4 updateMVP();
@@ -38,7 +38,6 @@ public:
     void loadModel(QString path);
     void loadLight();
     void loadScene();
-    void loadValidationScene();
 
     uint getWidth() {return _width;}
     uint getHeight() {return _height;}

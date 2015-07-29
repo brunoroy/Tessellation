@@ -11,22 +11,19 @@ Scene::Scene(Camera *camera):
     _camera->setZNearCoefficient(0.00001);
     _camera->setPivotPoint(Vec(0.0, 0.0, 0.0));
     _camera->setUpVector(Vec(0.0, 1.0, 0.0));
-    _camera->setPosition(Vec(0.0, 5.0, 0.0));
+    _camera->setPosition(Vec(0.0, 0.0, 60.0));
 }
 
 Scene::~Scene()
 {
 }
 
-void Scene::initialize(uint width, uint height, bool validation)
+void Scene::initialize(uint width, uint height)
 {
     _width = width;
     _height = height;
 
-    if (validation)
-        loadValidationScene();
-    else
-        loadScene();
+    loadScene();
 
     foreach (Mesh *mesh, _meshes)
         mesh->initialize();
@@ -59,7 +56,7 @@ void Scene::draw()
         mesh->setMVP(mvp);
         mesh->draw();
     }
-    updateConstraints();
+    //updateConstraints();
     _light->setMVP(mvp);
 }
 
@@ -83,17 +80,14 @@ void Scene::loadModel(QString path)
 {
     Texture::resetUnit();
     Texture* basicTexture = Texture::newFromNextUnit();
-    Texture* alphaTexture = Texture::newFromNextUnit();
     Mesh* mesh = new Mesh(path);
-    basicTexture->load("data/textures/red.jpg");
+    basicTexture->load("data/textures/white.jpg");
     basicTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
     basicTexture->initialize();
-    alphaTexture->load("data/textures/alpha.jpg");
-    alphaTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-    alphaTexture->initialize();
 
-    ((MaterialDefault*)(mesh->getMaterial()))->setTextures(basicTexture, alphaTexture);
-    mesh->translate(glm::vec3(0.0f, 10.0f, 0.0f));
+    ((MaterialDefault*)(mesh->getMaterial()))->setTexture(basicTexture);
+    //mesh->translate(glm::vec3(0.0f, 5.0f, -5.0f));
+    mesh->scale(glm::vec3(10.0f, 10.0f, 10.0f));
     addMesh(mesh);
 }
 
@@ -107,12 +101,6 @@ void Scene::loadLight()
 }
 
 void Scene::loadScene()
-{
-    loadModel("data/models/cube.obj");
-    loadLight();
-}
-
-void Scene::loadValidationScene()
 {
     loadModel("data/models/cube.obj");
     loadLight();
