@@ -36,9 +36,15 @@ void SceneViewer::init()
     _scene->initialize(1024, 768);
     _renderer->initialize(_scene.get());
 
-    initializeTS();
-
     _isInitialized = true;
+}
+
+void SceneViewer::toggleTessellation(bool value)
+{
+    if (value)
+        initializeTS();
+    _renderer->loadShaders(value);
+    update();
 }
 
 void SceneViewer::initializeTS()

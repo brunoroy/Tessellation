@@ -79,6 +79,7 @@ void Mesh::initialize()
 void Mesh::preDraw()
 {
     _material->bind();
+    //???
     Shaders::getShader("render")->transmitUniform("innerTL", 3);
     Shaders::getShader("render")->transmitUniform("outerTL", 2);
 }
@@ -92,6 +93,11 @@ void Mesh::setMVP(glm::mat4 matrix)
 
 void Mesh::draw()
 {
+    Shader *shader = Shaders::getShader("render");
+    bool doTessellation = shader->doTessellation();
+    //std::clog << "tessellation: " << doTessellation << std::endl;
+    shader->transmitUniform("doTessellation", doTessellation);
+
     glEnableVertexAttribArray(_locationVertices);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     glVertexAttribPointer(_locationVertices, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -111,9 +117,13 @@ void Mesh::draw()
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indiceBuffer);
-    glPatchParameteri(GL_PATCH_VERTICES, 3);
-    glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, 0);
-    //glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    if (doTessellation)
+    {
+        glPatchParameteri(GL_PATCH_VERTICES, 3);
+        glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, 0);
+    }
+    else
+        glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);

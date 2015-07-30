@@ -1,4 +1,4 @@
-#include "mediator.h"
+﻿#include "mediator.h"
 #include <QMessageBox>
 
 Mediator::Mediator()
@@ -47,7 +47,11 @@ void Mediator::initSignalSlot()
     connect(_userInterface.actionShaders, SIGNAL(triggered(bool)), this, SLOT(showShaders(bool)));
     connect(_userInterface.actionDefaultValues, SIGNAL(triggered()), this, SLOT(defaultValues()));
 
-    //shaders
+    //tessellation
+    connect(_userInterface.ckTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
+    connect(_userInterface.sInnerLevel, SIGNAL(valueChanged(int)), this, SLOT(setInnerLevel(int)));
+    connect(_userInterface.sOuterLevel, SIGNAL(valueChanged(int)), this, SLOT(setOuterLevel(int)));
+    connect(_userInterface.actionTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
 }
 
 void Mediator::initUserInterface()
@@ -63,6 +67,29 @@ void Mediator::showShaders(bool value)
 
 void Mediator::defaultValues()
 {
+    //tessellation
+    _userInterface.fTessellation->setEnabled(false);
+    _userInterface.sInnerLevel->setValue(1);
+    _userInterface.sOuterLevel->setValue(3);
+}
+
+void Mediator::toggleTessellation(bool value)
+{
+    if (value && !_userInterface.ckTessellation->isChecked())
+        _userInterface.ckTessellation->setChecked(value);
+
+    _userInterface.fTessellation->setEnabled(value);
+    _sceneViewer->toggleTessellation(value);
+}
+
+void Mediator::setInnerLevel(int level)
+{
+    _userInterface.eInnerLevel->setText(QString::number(level));
+}
+
+void Mediator::setOuterLevel(int level)
+{
+    _userInterface.eOuterLevel->setText(QString::number(level));
 }
 
 void Mediator::saveSnapshot()

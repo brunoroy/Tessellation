@@ -22,6 +22,7 @@ public:
     void drawPlane();
     bool isReady();
 
+    void toggleTessellation(bool value);
     void initializeTS();
 
 protected:

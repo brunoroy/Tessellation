@@ -102,7 +102,7 @@ void Scene::loadLight()
 
 void Scene::loadScene()
 {
-    loadModel("data/models/triangle.obj");
+    loadModel("data/models/tree.obj");
     loadLight();
 }
 

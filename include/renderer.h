@@ -10,12 +10,13 @@ public:
     Renderer();
     ~Renderer();
 
-    void loadShaders();
+    void loadShaders(bool doTessellation = false);
     void initialize(Scene *scene);
     void resize(int width, int height);
     bool isInitialized() {return _initialized;}
 
     void render();
+
     void getModelViewProjectionMatrix(GLfloat matrix[16]);
 
 protected:
@@ -24,6 +25,7 @@ protected:
 private:
     float _width, _height;
     bool _initialized;
+    bool _doTessellation;
 
     qglviewer::Camera *_camera;
     Scene *_scene;

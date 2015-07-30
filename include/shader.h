@@ -11,7 +11,7 @@
 class Shader
 {
 public:
-    Shader(QString value, QString filename);
+    Shader(QString value, QString filename, bool doTessellation = false);
     ~Shader();
 
     void initialize();
@@ -37,12 +37,14 @@ public:
     void enable();
     void disable();
 
+    bool doTessellation() {return _doTessellation;}
+
 private:
     QString _value;
     QStringList _shaderFilenames;
+    bool _doTessellation;
 
     std::vector<GLuint> _shaderIds;
-    GLint _shaderLocation[2];
     GLuint _programId;
     GLuint _matrixId;
 
@@ -55,8 +57,9 @@ private:
 class Shaders
 {
 public:
+    static void clear() {_shaders.clear();}
     static Shader* getShader(QString value);
-    static void addShader(QString value, QStringList attributes, QStringList uniforms);
+    static void addShader(QString value, QStringList attributes, QStringList uniforms, bool doTessellation = false);
 
 private:
     static QHash<QString, Shader*> _shaders;

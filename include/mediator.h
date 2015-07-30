@@ -26,6 +26,11 @@ public slots:
     void saveSnapshot();
     void about();
 
+    //tessellation
+    void toggleTessellation(bool value);
+    void setInnerLevel(int level);
+    void setOuterLevel(int level);
+
 private:
     std::shared_ptr<QMainWindow> _mainWindow;
     std::shared_ptr<SceneViewer> _sceneViewer;

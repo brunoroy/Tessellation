@@ -8,13 +8,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
 
-Shader::Shader(QString value, QString filename)
+Shader::Shader(QString value, QString filename, bool doTessellation)
 {
     _value = value;
+    _doTessellation = doTessellation;
+    std::clog << "tessellation: " << doTessellation << std::endl;
+
     _shaderFilenames.append(QString(filename).append(".vs"));
-    _shaderFilenames.append(QString(filename).append(".cs"));
-    _shaderFilenames.append(QString(filename).append(".es"));
-    _shaderFilenames.append(QString(filename).append(".gs"));
+    if (doTessellation)
+    {
+        _shaderFilenames.append(QString(filename).append(".cs"));
+        _shaderFilenames.append(QString(filename).append(".es"));
+        _shaderFilenames.append(QString(filename).append(".gs"));
+    }
     _shaderFilenames.append(QString(filename).append(".fs"));
 }
 
@@ -46,10 +52,14 @@ char* Shader::loadShaderFile(QString path)
 void Shader::load(QStringList attributes, QStringList uniforms)
 {
     _shaderIds.push_back(glCreateShader(GL_VERTEX_SHADER));
-    _shaderIds.push_back(glCreateShader(GL_TESS_CONTROL_SHADER));
-    _shaderIds.push_back(glCreateShader(GL_TESS_EVALUATION_SHADER));
-    _shaderIds.push_back(glCreateShader(GL_GEOMETRY_SHADER));
+    if (_doTessellation)
+    {
+        _shaderIds.push_back(glCreateShader(GL_TESS_CONTROL_SHADER));
+        _shaderIds.push_back(glCreateShader(GL_TESS_EVALUATION_SHADER));
+        _shaderIds.push_back(glCreateShader(GL_GEOMETRY_SHADER));
+    }
     _shaderIds.push_back(glCreateShader(GL_FRAGMENT_SHADER));
+    std::clog << "shaders: " << _shaderIds.size() << std::endl;
 
     GLint result = GL_FALSE;
     int infoLogLength;
@@ -90,11 +100,8 @@ void Shader::load(QStringList attributes, QStringList uniforms)
 
     _matrixId = glGetUniformLocation(_programId, "mvp");
 
-    glDeleteShader(_shaderIds[0]);
-    glDeleteShader(_shaderIds[1]);
-    glDeleteShader(_shaderIds[2]);
-    glDeleteShader(_shaderIds[3]);
-    glDeleteShader(_shaderIds[4]);
+    for (size_t i = 0; i < _shaderIds.size(); i++)
+        glDeleteShader(_shaderIds[i]);
 
     bind();
     foreach (QString attribute, attributes)
@@ -106,7 +113,6 @@ void Shader::load(QStringList attributes, QStringList uniforms)
 
 void Shader::enable()
 {
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(_programId);
 }
 
@@ -200,10 +206,10 @@ Shader* Shaders::getShader(QString value)
     if (_shaders.contains(value))
         return _shaders.value(value);
 }
-void Shaders::addShader(QString value, QStringList attributes, QStringList uniforms)
+void Shaders::addShader(QString value, QStringList attributes, QStringList uniforms, bool doTessellation)
 {
     QString path = QString("shaders/").append(value);
-    Shader *shader = new Shader(value, path);
+    Shader *shader = new Shader(value, path, doTessellation);
     shader->load(attributes, uniforms);
     _shaders.insert(value, shader);
 }

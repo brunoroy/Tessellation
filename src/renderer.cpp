@@ -10,9 +10,10 @@
 #include "shader.h"
 
 Renderer::Renderer():
-    _initialized(false)
+    _initialized(false),
+    _doTessellation(false)
 {
-    loadShaders();
+    loadShaders(_doTessellation);
 }
 
 Renderer::~Renderer()
@@ -35,9 +36,12 @@ void Renderer::resize(int width, int height)
     _height = height;
 }
 
-void Renderer::loadShaders()
+void Renderer::loadShaders(bool doTessellation)
 {
-    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal", QStringList() << "mvp" << "textureDiffuse");
+    Shaders::clear();
+    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
+                       QStringList() << "mvp" << "doTessellation" << "textureDiffuse" << "innerTL" << "outerTL",
+                       doTessellation);
 }
 
 void Renderer::render()

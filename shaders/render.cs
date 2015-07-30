@@ -3,8 +3,8 @@
 layout(vertices = 3) out;
 in vec3 vertexPosition[];
 out vec3 controlPosition[];
-uniform float innerTL;
-uniform float outerTL;
+uniform int innerTL;
+uniform int outerTL;
 
 #define INV_ID gl_InvocationID
 
