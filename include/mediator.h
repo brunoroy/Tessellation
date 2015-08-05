@@ -21,7 +21,11 @@ public:
     void initUserInterface();
 
 public slots:
+    //toolbar
+    void importModel();
+    void importAnimation();
     void showShaders(bool value);
+    void showPlayer(bool value);
     void defaultValues();
     void saveSnapshot();
     void about();
@@ -30,6 +34,10 @@ public slots:
     void toggleTessellation(bool value);
     void setInnerLevel(int level);
     void setOuterLevel(int level);
+
+    //player
+    void changeCurrentFrame(int currentFrame);
+    void playPause();
 
 private:
     std::shared_ptr<QMainWindow> _mainWindow;

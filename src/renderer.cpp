@@ -44,12 +44,12 @@ void Renderer::loadShaders(bool doTessellation)
                        doTessellation);
 }
 
-void Renderer::render()
+void Renderer::render(const int currentFrame, const bool animation)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClearDepth(1.0f);
 
-    _scene->draw();
+    _scene->draw(currentFrame, animation);
 }
 
 void Renderer::getModelViewProjectionMatrix(GLfloat matrix[16])

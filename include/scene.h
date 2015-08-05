@@ -6,6 +6,8 @@
 #include <vector>
 #include "light.h"
 
+#include <QProgressBar>
+
 using namespace qglviewer;
 
 class Scene
@@ -14,8 +16,8 @@ public:
     Scene(Camera *camera);
     ~Scene();
 
-    void initialize(uint width, uint height);
-    void draw();
+    void initialize(uint width, uint height, const bool animation = false);
+    void draw(const int currentFrame, const bool animation);
     void updateConstraints();
     glm::mat4 updateMVP();
     bool isLoaded() {return _loaded;}
@@ -37,7 +39,8 @@ public:
     glm::mat4 getCurrentMVP();
     void loadModel(std::string path);
     void loadLight();
-    void loadScene();
+    void loadScene(std::string path);
+    void loadAnimation(std::string path, const int frameCount, QProgressBar &progress);
 
     uint getWidth() {return _width;}
     uint getHeight() {return _height;}

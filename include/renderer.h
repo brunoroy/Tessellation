@@ -15,7 +15,7 @@ public:
     void resize(int width, int height);
     bool isInitialized() {return _initialized;}
 
-    void render();
+    void render(const int currentFrame, const bool animation = false);
 
     void getModelViewProjectionMatrix(GLfloat matrix[16]);
 

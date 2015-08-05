@@ -100,7 +100,8 @@ public:
     Mesh(QString filename);
     ~Mesh();
 
-    bool loadObject(QString filename);
+    bool loadModelWavefront(QString filename);
+    bool loadModelPLY(QString filename);
     void addVertex(Vertex vertex)
     {
         _positions.push_back(vertex.getPosition());

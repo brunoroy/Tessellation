@@ -1,5 +1,6 @@
 ﻿#include "mediator.h"
 #include <QMessageBox>
+#include <QFileDialog>
 
 Mediator::Mediator()
 {
@@ -37,6 +38,8 @@ void Mediator::initViewer()
 void Mediator::initSignalSlot()
 {
     //file
+    connect(_userInterface.actionImportModel, SIGNAL(triggered()), this, SLOT(importModel()));
+    connect(_userInterface.actionImportAnimation, SIGNAL(triggered()), this, SLOT(importAnimation()));
     connect(_userInterface.actionSnapshot, SIGNAL(triggered()), this, SLOT(saveSnapshot()));
     connect(_userInterface.actionQuit, SIGNAL(triggered()), _mainWindow.get(), SLOT(close()));
 
@@ -46,23 +49,38 @@ void Mediator::initSignalSlot()
     //tools
     connect(_userInterface.actionShaders, SIGNAL(triggered(bool)), this, SLOT(showShaders(bool)));
     connect(_userInterface.actionDefaultValues, SIGNAL(triggered()), this, SLOT(defaultValues()));
+    connect(_userInterface.actionPlayer, SIGNAL(triggered(bool)), this, SLOT(showPlayer(bool)));
 
     //tessellation
     connect(_userInterface.ckTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
     connect(_userInterface.sInnerLevel, SIGNAL(valueChanged(int)), this, SLOT(setInnerLevel(int)));
     connect(_userInterface.sOuterLevel, SIGNAL(valueChanged(int)), this, SLOT(setOuterLevel(int)));
     connect(_userInterface.actionTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
+
+    //player
+    connect(_userInterface.sFrames, SIGNAL(valueChanged(int)), this, SLOT(changeCurrentFrame(int)));
+    connect(_userInterface.bPlayPause, SIGNAL(pressed()), this, SLOT(playPause()));
 }
 
 void Mediator::initUserInterface()
 {
     defaultValues();
     showShaders(false);
+
+    _userInterface.actionPlayer->setEnabled(false);
+    showPlayer(false);
+
+    _userInterface.progressBar->setVisible(false);
 }
 
 void Mediator::showShaders(bool value)
 {
     _userInterface.widgetTools->setVisible(value);
+}
+
+void Mediator::showPlayer(bool value)
+{
+    _userInterface.widgetPlayer->setVisible(value);
 }
 
 void Mediator::defaultValues()
@@ -75,7 +93,8 @@ void Mediator::defaultValues()
 
 void Mediator::toggleTessellation(bool value)
 {
-    if (value && !_userInterface.ckTessellation->isChecked())
+    if ((value && !_userInterface.ckTessellation->isChecked()) ||
+        (!value && _userInterface.ckTessellation->isChecked()))
         _userInterface.ckTessellation->setChecked(value);
 
     _userInterface.fTessellation->setEnabled(value);
@@ -90,6 +109,52 @@ void Mediator::setInnerLevel(int level)
 void Mediator::setOuterLevel(int level)
 {
     _userInterface.eOuterLevel->setText(QString::number(level));
+}
+
+void Mediator::changeCurrentFrame(int currentFrame)
+{
+    QString currentFrameStr(std::to_string(currentFrame).c_str());
+    _userInterface.eCurrentFrame->setText(currentFrameStr);
+}
+
+void Mediator::importModel()
+{
+    QFileDialog dialog;
+    if (dialog.exec())
+    {
+        QStringList files = dialog.selectedFiles();
+        if (!files.isEmpty())
+        {
+            std::string path(std::string(files.at(0).toStdString()));
+            _sceneViewer->loadModel(path);
+        }
+    }
+}
+
+void Mediator::importAnimation()
+{
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+
+    if (dialog.exec())
+    {
+        QDir folder(dialog.selectedFiles().at(0));
+        QFileInfoList files = folder.entryInfoList(QStringList() << "*.ply");
+        if (!files.isEmpty())
+        {
+            std::string path(std::string(files.at(0).filePath().toStdString()));
+            _userInterface.progressBar->setVisible(true);
+            _sceneViewer->loadAnimation(path, files.size());
+            _userInterface.progressBar->setVisible(false);
+            _userInterface.actionPlayer->setEnabled(true);
+        }
+    }
+}
+
+void Mediator::playPause()
+{
+    _sceneViewer->playPause();
 }
 
 void Mediator::saveSnapshot()

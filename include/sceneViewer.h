@@ -2,6 +2,8 @@
 #define SCENEVIEWER_H
 
 #include "renderer.h"
+#include "scenePlayer.h"
+
 #include <QGLViewer/qglviewer.h>
 
 #include <QVector3D>
@@ -25,6 +27,10 @@ public:
     void toggleTessellation(bool value);
     void initializeTS();
 
+    void loadAnimation(std::string path, const int frameCount);
+    void loadModel(std::string path);
+    void playPause();
+
 protected:
     void init();
     void draw();
@@ -34,9 +40,13 @@ protected:
 
 private:
     bool _isInitialized;
+    bool _isWireframe;
+    std::string _animationPath;
+    int _currentFrame;
 
     std::shared_ptr<Scene> _scene;
     std::shared_ptr<Renderer> _renderer;
+    std::shared_ptr<ScenePlayer> _player;
 
     qglviewer::Vec _cameraOrigin;
     qglviewer::Vec _cameraDirection;

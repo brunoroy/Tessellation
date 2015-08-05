@@ -6,6 +6,7 @@
 #include <QTextStream>
 
 #include <iostream>
+#include <fstream>
 #include <glm/glm.hpp>
 
 Mesh::Mesh():
@@ -24,9 +25,16 @@ Mesh::Mesh(Mesh *mesh)
 
 Mesh::Mesh(QString filename)
 {
+    std::string filetype = filename.mid(filename.length()-3, 3).toStdString();
+
     if (!filename.isEmpty())
     {
-        loadObject(filename);
+        //std::clog << "filetype: " << filetype << std::endl;
+        if (filetype.compare("obj") == 0)
+            loadModelWavefront(filename);
+        else if (filetype.compare("ply") == 0)
+            loadModelPLY(filename);
+
         _objModel = true;
     }
 }
@@ -52,7 +60,7 @@ void Mesh::initialize()
     glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(glm::vec3), &_positions[0], GL_STATIC_DRAW);
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
-    if(_textureCoordinates.size() > 0)
+    if(!_textureCoordinates.empty())
     {
         //texture
         _locationTextureCoordinates = _material->getShader()->getAttribute("uv");
@@ -62,7 +70,7 @@ void Mesh::initialize()
         glUnmapBuffer(GL_ARRAY_BUFFER);
     }
 
-    if(_normals.size() > 0)
+    if(!_normals.empty())
     {
         //normals
         _locationNormals = _material->getShader()->getAttribute("normal");
@@ -102,14 +110,14 @@ void Mesh::draw()
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     glVertexAttribPointer(_locationVertices, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    if (_textureCoordinates.size() > 0)
+    if (!_textureCoordinates.empty())
     {
         glEnableVertexAttribArray(_locationTextureCoordinates);
         glBindBuffer(GL_ARRAY_BUFFER, _textureBuffer);
         glVertexAttribPointer(_locationTextureCoordinates, 2, GL_FLOAT, GL_FALSE, 0, 0);
     }
 
-    if (_normals.size() > 0)
+    if (!_normals.empty())
     {
         glEnableVertexAttribArray(_locationNormals);
         glBindBuffer(GL_ARRAY_BUFFER, _normalBuffer);
@@ -130,8 +138,106 @@ void Mesh::draw()
     glDisableVertexAttribArray(0);
 }
 
+bool Mesh::loadModelPLY(QString filename)
+{
+    std::string line;
+    std::ifstream modelFile(filename.toStdString());
+    if (modelFile.is_open())
+    {
+        QStringList properties;
+        std::vector<glm::vec3> positions;
+        std::vector<glm::vec3> normals;
+        std::vector<glm::vec2> uvs;
+
+        while (getline(modelFile, line))
+        {
+            QString value(line.c_str());
+            if (value.contains("element vertex"))
+            {
+                QStringList values = value.split(" ");
+                _vertexCount = values.at(2).toInt();
+            }
+            else if (value.contains("element face"))
+            {
+                QStringList values = value.split(" ");
+                _triangleCount = values.at(2).toInt();
+            }
+            else if (value.contains("property float"))
+            {
+                QStringList values = value.split(" ");
+                properties.push_back(values.at(2));
+            }
+            else if (value.compare("end_header") == 0)
+            {
+                glm::vec3 position, normal;
+                for (int i = 0; i < _vertexCount; i++)
+                {
+                    if (getline(modelFile, line))
+                    {
+                        QString value(line.c_str());
+                        QStringList values = value.split(" ");
+                        for (int p = 0; p < values.size(); p++)
+                        {
+                            if (properties.at(p).compare("x") == 0)
+                                position.x = values.at(p).toFloat();
+                            else if (properties.at(p).compare("y") == 0)
+                                position.y = values.at(p).toFloat();
+                            else if (properties.at(p).compare("z") == 0)
+                                position.z = values.at(p).toFloat();
+                            else if (properties.at(p).compare("nx") == 0)
+                                normal.x = values.at(p).toFloat();
+                            else if (properties.at(p).compare("ny") == 0)
+                                normal.y = values.at(p).toFloat();
+                            else if (properties.at(p).compare("nz") == 0)
+                                normal.z = values.at(p).toFloat();
+                        }
+
+                        positions.push_back(position);
+                        uvs.push_back(glm::vec2(1.0f, 1.0f));
+                        normals.push_back(normal);
+                    }
+                }
+
+                for (int i = 0; i < _triangleCount; i++)
+                {
+                    if (getline(modelFile, line))
+                    {
+                        QString value(line.c_str());
+                        QStringList values = value.split(" ");
+                        int vertexCount = values.at(0).toInt();
+                        if (vertexCount == 3)
+                            for (int c = 0; c < vertexCount; c++)
+                                _indicePolygons.push_back(IndicePolygon(values.at(c+1).toInt(), values.at(c+1).toInt(), values.at(c+1).toInt()));
+
+                    }
+                }
+            }
+        }
+
+        for (size_t i = 0; i < _indicePolygons.size(); i++)
+        {
+            _indices.push_back(i);
+            _positions.push_back(positions.at(_indicePolygons.at(i).vertex));
+            if (!uvs.empty())
+                _textureCoordinates.push_back(uvs.at(_indicePolygons.at(i).uv));
+            if (!normals.empty())
+                _normals.push_back(normals.at(_indicePolygons.at(i).normal));
+        }
+
+        std::cout << "Read " << _triangleCount << " triangles and "
+             << _vertexCount << " vertices." << std::endl;
+
+        _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
+
+        modelFile.close();
+        return true;
+    }
+    else
+        return false;
+}
+
 //from Nori educational ray tracer
-bool Mesh::loadObject(QString filename)
+bool Mesh::loadModelWavefront(QString filename)
 {
     typedef boost::unordered_map<OBJVertex, uint32_t, OBJVertexHash> VertexMap;
 
@@ -209,7 +315,7 @@ bool Mesh::loadObject(QString filename)
     {
         _indices.push_back(i);
         _positions.push_back(positions.at(_indicePolygons.at(i).vertex));
-        if (!textureCoordinates.empty())
+         if (!textureCoordinates.empty())
             _textureCoordinates.push_back(textureCoordinates.at(_indicePolygons.at(i).uv));
         if (!normals.empty())
             _normals.push_back(normals.at(_indicePolygons.at(i).normal));

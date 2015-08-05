@@ -18,17 +18,20 @@ Scene::~Scene()
 {
 }
 
-void Scene::initialize(uint width, uint height)
+void Scene::initialize(uint width, uint height, const bool animation)
 {
     _width = width;
     _height = height;
 
-    loadScene();
+    /*if (animation)
+        loadAnimation("data/models/merge/cam0_");
+    else
+        loadScene("data/models/triangle.obj");
 
     foreach (Mesh *mesh, _meshes)
         mesh->initialize();
 
-    _loaded = true;
+    _loaded = true;*/
 }
 
 glm::mat4 Scene::updateMVP()
@@ -47,28 +50,28 @@ glm::mat4 Scene::updateMVP()
     return _mvp;
 }
 
-void Scene::draw()
+void Scene::draw(const int currentFrame, const bool animation)
 {
-    glm::mat4 mvp = updateMVP();
-    foreach (Mesh *mesh, _meshes)
+    if (isLoaded())
     {
-        mesh->preDraw();
-        mesh->setMVP(mvp);
-        mesh->draw();
+        glm::mat4 mvp = updateMVP();
+        if (animation)
+        {
+            _meshes.at(currentFrame-1)->preDraw();
+            _meshes.at(currentFrame-1)->setMVP(mvp);
+            _meshes.at(currentFrame-1)->draw();
+        }
+        else
+        {
+            foreach (Mesh *mesh, _meshes)
+            {
+                mesh->preDraw();
+                mesh->setMVP(mvp);
+                mesh->draw();
+            }
+        }
+        _light->setMVP(mvp);
     }
-    //updateConstraints();
-    _light->setMVP(mvp);
-}
-
-void Scene::updateConstraints()
-{
-    Quaternion orientation = _camera->orientation();
-    float yaw = 2.0 * asin(orientation[0] * orientation[2] - orientation[3] * orientation[1]);
-
-    _lookConstraints = glm::vec3(sin(yaw), -cos(yaw), 0.0);
-
-    glm::vec3 camera = glm::vec3(_camera->position().x, _camera->position().y, _camera->position().z);
-    reinterpret_cast<DirectionalLight*>(_light.get())->update(camera, _lookConstraints);
 }
 
 void Scene::resize(uint width, uint height)
@@ -80,13 +83,13 @@ void Scene::loadModel(std::string path)
 {
     Texture::resetUnit();
     Texture* basicTexture = Texture::newFromNextUnit();
+
     Mesh* mesh = new Mesh(QString(path.c_str()));
     basicTexture->load("data/textures/white.jpg");
     basicTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
     basicTexture->initialize();
 
     ((MaterialDefault*)(mesh->getMaterial()))->setTexture(basicTexture);
-    //mesh->translate(glm::vec3(0.0f, 5.0f, -5.0f));
     mesh->scale(glm::vec3(10.0f, 10.0f, 10.0f));
     addMesh(mesh);
 }
@@ -100,10 +103,35 @@ void Scene::loadLight()
     setLight(sun);
 }
 
-void Scene::loadScene()
+void Scene::loadScene(std::string path)
 {
-    loadModel("data/models/tree.obj");
+    loadModel(path);
     loadLight();
+
+    foreach (Mesh *mesh, _meshes)
+        mesh->initialize();
+
+    _loaded = true;
+}
+
+void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &progress)
+{
+    _meshes.clear();
+    progress.setValue(0);
+    progress.setMaximum(frameCount);
+    for (size_t i = 0; i < frameCount; i++)
+    {
+        std::string filename(std::string(path).append(std::to_string(i)).append(".ply"));
+        //std::clog << "filename: " << filename << std::endl;
+        loadModel(filename);
+        progress.setValue(progress.value()+1);
+    }
+    loadLight();
+
+    foreach (Mesh *mesh, _meshes)
+        mesh->initialize();
+
+    _loaded = true;
 }
 
 void Scene::setLight(Light *light)

@@ -7,7 +7,9 @@
 
 SceneViewer::SceneViewer(Ui_MainWindow *userInterface, QGLFormat glFormat):
     QGLViewer(glFormat),
-    _isInitialized(false)
+    _isInitialized(false),
+    _isWireframe(false),
+    _currentFrame(1)
 {
     _userInterface = userInterface;
     resize(1024, 768);
@@ -19,15 +21,11 @@ SceneViewer::~SceneViewer()
 
 void SceneViewer::init()
 {
-    setSceneRadius(1000.0);
+    setSceneRadius(100.0);
     setSceneCenter(Vec(0.0, 0.0, 0.0));
     setBackgroundColor(Qt::black);
 
-    //setMouseBinding(Qt::NoModifier, Qt::LeftButton, CAMERA, LOOK_AROUND);
-    //setMouseBinding(Qt::NoModifier, Qt::RightButton, NO_CLICK_ACTION);
-    //setWheelBinding(Qt::NoModifier, CAMERA, NO_MOUSE_ACTION);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glewExperimental = GL_TRUE;
     glewInit();
 
@@ -37,6 +35,21 @@ void SceneViewer::init()
     _renderer->initialize(_scene.get());
 
     _isInitialized = true;
+}
+
+void SceneViewer::loadAnimation(std::string path, const int frameCount)
+{
+    _animationPath = path.substr(0, path.length()-5);
+    _player.reset(new ScenePlayer(frameCount));
+    _userInterface->sFrames->setValue(1);
+    _userInterface->sFrames->setMinimum(1);
+    _userInterface->sFrames->setMaximum(frameCount);
+    _scene->loadAnimation(_animationPath, frameCount, *_userInterface->progressBar);
+}
+
+void SceneViewer::loadModel(std::string path)
+{
+    _scene->loadScene(path);
 }
 
 void SceneViewer::toggleTessellation(bool value)
@@ -62,6 +75,16 @@ bool SceneViewer::isReady()
         return false;
 }
 
+void SceneViewer::playPause()
+{
+    if (_player->isPaused())
+        startAnimation();
+    else
+        stopAnimation();
+
+    _player->playPause();
+}
+
 void SceneViewer::resizeGL(int width, int height)
 {
     _renderer->resize(width, height);
@@ -69,20 +92,22 @@ void SceneViewer::resizeGL(int width, int height)
 
 void SceneViewer::animate()
 {
-    //_userInterface->statusBar->showMessage(QString("camera: {").append(QString::number(_scene->getCamera()->position().x)).append(", ").append(QString::number(_scene->getCamera()->position().y)).append(", ").append(QString::number(_scene->getCamera()->position().z)).append("}"));
-    //_userInterface->statusBar->showMessage(QString("FPS: ").append(QString::number(static_cast<int>(this->currentFPS()))));
+    _currentFrame = _player->getNextFrame();
+    _userInterface->sFrames->setValue(_currentFrame);
+    //_scene->loadAnimation(_animationPath, currentFrame);
 }
 
 void SceneViewer::draw()
 {
-    _renderer->render();
+    bool animation = (animationIsStarted() || _userInterface->widgetPlayer->isEnabled());
+    _renderer->render(_currentFrame, animation);
 }
 
 void SceneViewer::keyPressEvent(QKeyEvent* event)
 {
-#if USE_KEYBOARD
     switch (event->key())
     {
+#if USE_KEYBOARD
         case Qt::Key_W:
             _scene->moveForward();
         break;
@@ -95,7 +120,16 @@ void SceneViewer::keyPressEvent(QKeyEvent* event)
         case Qt::Key_D:
             _scene->strafeRight();
         break;
+#endif
+        case Qt::Key_Z:
+        {
+            if (_isWireframe)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            else
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            _isWireframe = !_isWireframe;
+        }
+        break;
     }
     updateGL();
-#endif
 }

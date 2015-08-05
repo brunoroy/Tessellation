@@ -1,5 +1,3 @@
-HOME_LOCAL = /home/broy/dev/local
-
 QMAKE_CXXFLAGS += -std=gnu++0x
 QT += core gui opengl xml
 TARGET = Tessellation
@@ -10,9 +8,9 @@ SOURCES += src/*.cpp
 FORMS += gui/mainWindow.ui
 OTHER_FILES += shaders/render.*
 
-INCLUDEPATH += include $$HOME_LOCAL/include
-LIBS += -L/usr/lib64 -lGL -lGLEW
-LIBS += -L$$HOME_LOCAL/lib -lQGLViewer
+INCLUDEPATH += include
+LIBS += -L/usr/lib/x86_64-linux-gnu -lGL -lGLU -lGLEW
+LIBS += -lQGLViewer
 
 DESTDIR = .
 OBJECTS_DIR = build
