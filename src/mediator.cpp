@@ -113,7 +113,7 @@ void Mediator::setOuterLevel(int level)
 
 void Mediator::changeCurrentFrame(int currentFrame)
 {
-    QString currentFrameStr(std::to_string(currentFrame).c_str());
+    QString currentFrameStr(std::to_string(static_cast<ll>(currentFrame)).c_str());
     _userInterface.eCurrentFrame->setText(currentFrameStr);
 }
 

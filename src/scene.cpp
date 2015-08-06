@@ -18,20 +18,12 @@ Scene::~Scene()
 {
 }
 
-void Scene::initialize(uint width, uint height, const bool animation)
+void Scene::initialize(uint width, uint height)
 {
     _width = width;
     _height = height;
 
-    /*if (animation)
-        loadAnimation("data/models/merge/cam0_");
-    else
-        loadScene("data/models/triangle.obj");
-
-    foreach (Mesh *mesh, _meshes)
-        mesh->initialize();
-
-    _loaded = true;*/
+    loadScene("data/models/cube.obj");
 }
 
 glm::mat4 Scene::updateMVP()
@@ -105,6 +97,7 @@ void Scene::loadLight()
 
 void Scene::loadScene(std::string path)
 {
+    _meshes.clear();
     loadModel(path);
     loadLight();
 
@@ -121,8 +114,7 @@ void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &
     progress.setMaximum(frameCount);
     for (size_t i = 0; i < frameCount; i++)
     {
-        std::string filename(std::string(path).append(std::to_string(i)).append(".ply"));
-        //std::clog << "filename: " << filename << std::endl;
+        std::string filename(std::string(path).append(std::to_string(static_cast<ll>(i))).append(".ply"));
         loadModel(filename);
         progress.setValue(progress.value()+1);
     }

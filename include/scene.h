@@ -8,6 +8,8 @@
 
 #include <QProgressBar>
 
+typedef long long ll;
+
 using namespace qglviewer;
 
 class Scene
@@ -16,7 +18,7 @@ public:
     Scene(Camera *camera);
     ~Scene();
 
-    void initialize(uint width, uint height, const bool animation = false);
+    void initialize(uint width, uint height);
     void draw(const int currentFrame, const bool animation);
     void updateConstraints();
     glm::mat4 updateMVP();

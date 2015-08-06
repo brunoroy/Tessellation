@@ -29,7 +29,6 @@ Mesh::Mesh(QString filename)
 
     if (!filename.isEmpty())
     {
-        //std::clog << "filetype: " << filetype << std::endl;
         if (filetype.compare("obj") == 0)
             loadModelWavefront(filename);
         else if (filetype.compare("ply") == 0)
