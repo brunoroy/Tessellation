@@ -23,7 +23,7 @@ void Scene::initialize(uint width, uint height)
     _width = width;
     _height = height;
 
-    loadScene("data/models/cube.obj");
+    loadScene("data/models/triangle.obj");
 }
 
 glm::mat4 Scene::updateMVP()

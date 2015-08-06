@@ -18,7 +18,7 @@ Shader::Shader(QString value, QString filename, bool doTessellation)
     {
         _shaderFilenames.append(QString(filename).append(".cs"));
         _shaderFilenames.append(QString(filename).append(".es"));
-        _shaderFilenames.append(QString(filename).append(".gs"));
+        //_shaderFilenames.append(QString(filename).append(".gs"));
     }
     _shaderFilenames.append(QString(filename).append(".fs"));
 }
@@ -55,7 +55,7 @@ void Shader::load(QStringList attributes, QStringList uniforms)
     {
         _shaderIds.push_back(glCreateShader(GL_TESS_CONTROL_SHADER));
         _shaderIds.push_back(glCreateShader(GL_TESS_EVALUATION_SHADER));
-        _shaderIds.push_back(glCreateShader(GL_GEOMETRY_SHADER));
+        //_shaderIds.push_back(glCreateShader(GL_GEOMETRY_SHADER));
     }
     _shaderIds.push_back(glCreateShader(GL_FRAGMENT_SHADER));
 
