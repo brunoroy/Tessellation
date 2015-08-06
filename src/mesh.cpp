@@ -127,11 +127,19 @@ void Mesh::draw()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indiceBuffer);
     if (doTessellation)
     {
-        glPatchParameteri(GL_PATCH_VERTICES, 3);
+        //glBeginTransformFeedback(GL_TRIANGLES);
+        //glPatchParameteri(GL_PATCH_VERTICES, 3);
         glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, 0);
+        //glEndTransformFeedback();
+
+        //GLfloat feedback[9];
+        //glGetBufferSubData(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(feedback), feedback);
+        //printf("%f %f %f %f %f %f %f %f %f\n", feedback[0], feedback[1], feedback[2], feedback[3], feedback[4], feedback[5], feedback[6], feedback[7], feedback[8]);
     }
     else
+    {
         glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    }
 
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
