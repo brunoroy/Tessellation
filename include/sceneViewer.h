@@ -30,6 +30,11 @@ public:
     void loadAnimation(std::string path, const int frameCount);
     void loadModel(std::string path);
     void playPause();
+    void setCurrentFrame(const int currentFrame);
+
+    void setInnerTL(int value);
+    void setOuterTL(int value);
+    bool isTessellated() {return _isTessellated;}
 
 protected:
     void init();
@@ -43,6 +48,7 @@ private:
     bool _isWireframe;
     std::string _animationPath;
     int _currentFrame;
+    bool _isTessellated;
 
     std::shared_ptr<Scene> _scene;
     std::shared_ptr<Renderer> _renderer;

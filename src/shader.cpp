@@ -12,7 +12,6 @@ Shader::Shader(QString value, QString filename, bool doTessellation)
 {
     _value = value;
     _doTessellation = doTessellation;
-    std::clog << "tessellation: " << doTessellation << std::endl;
 
     _shaderFilenames.append(QString(filename).append(".vs"));
     if (doTessellation)
@@ -59,7 +58,6 @@ void Shader::load(QStringList attributes, QStringList uniforms)
         _shaderIds.push_back(glCreateShader(GL_GEOMETRY_SHADER));
     }
     _shaderIds.push_back(glCreateShader(GL_FRAGMENT_SHADER));
-    std::clog << "shaders: " << _shaderIds.size() << std::endl;
 
     GLint result = GL_FALSE;
     int infoLogLength;

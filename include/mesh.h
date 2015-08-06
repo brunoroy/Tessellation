@@ -134,6 +134,9 @@ public:
     bool isQuads() {return _indices.size()%3 == 0;}
     bool isTriangles() {return _indices.size()%4 == 0;}
 
+    void setInnerTL(int value) {_innerTL = value;}
+    void setOuterTL(int value) {_outerTL = value;}
+
 protected:
     std::vector<uint> _indices;
     std::vector<IndicePolygon> _indicePolygons;
@@ -146,6 +149,9 @@ protected:
     float *_positionArray;
     float *_textureArray;
     float *_normalArray;
+
+    int _innerTL;
+    int _outerTL;
 
     std::vector<Polygon> _polygons;
     std::vector<Vertex> _vertices;

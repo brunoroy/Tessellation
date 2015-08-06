@@ -87,8 +87,8 @@ void Mediator::defaultValues()
 {
     //tessellation
     _userInterface.fTessellation->setEnabled(false);
-    _userInterface.sInnerLevel->setValue(1);
-    _userInterface.sOuterLevel->setValue(3);
+    _userInterface.sInnerLevel->setValue(2);
+    _userInterface.sOuterLevel->setValue(1);
 }
 
 void Mediator::toggleTessellation(bool value)
@@ -98,22 +98,29 @@ void Mediator::toggleTessellation(bool value)
         _userInterface.ckTessellation->setChecked(value);
 
     _userInterface.fTessellation->setEnabled(value);
+    _sceneViewer->setInnerTL(_userInterface.eInnerLevel->text().toInt());
+    _sceneViewer->setOuterTL(_userInterface.eOuterLevel->text().toInt());
     _sceneViewer->toggleTessellation(value);
 }
 
 void Mediator::setInnerLevel(int level)
 {
     _userInterface.eInnerLevel->setText(QString::number(level));
+    if (_sceneViewer->isTessellated())
+        _sceneViewer->setInnerTL(level);
 }
 
 void Mediator::setOuterLevel(int level)
 {
     _userInterface.eOuterLevel->setText(QString::number(level));
+    if (_sceneViewer->isTessellated())
+        _sceneViewer->setOuterTL(level);
 }
 
 void Mediator::changeCurrentFrame(int currentFrame)
 {
     QString currentFrameStr(std::to_string(static_cast<ll>(currentFrame)).c_str());
+    _sceneViewer->setCurrentFrame((currentFrame));
     _userInterface.eCurrentFrame->setText(currentFrameStr);
 }
 

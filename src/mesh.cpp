@@ -14,7 +14,9 @@ Mesh::Mesh():
     _rotation(1.0f),
     _scaling(1.0f),
     _objModel(false),
-    _mvp(glm::mat4(1.0f))
+    _mvp(glm::mat4(1.0f)),
+    _innerTL(1),
+    _outerTL(1)
 {
 }
 
@@ -86,9 +88,8 @@ void Mesh::initialize()
 void Mesh::preDraw()
 {
     _material->bind();
-    //???
-    Shaders::getShader("render")->transmitUniform("innerTL", 3);
-    Shaders::getShader("render")->transmitUniform("outerTL", 2);
+    Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
+    Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);
 }
 
 void Mesh::setMVP(glm::mat4 matrix)

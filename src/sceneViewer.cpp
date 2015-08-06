@@ -9,7 +9,8 @@ SceneViewer::SceneViewer(Ui_MainWindow *userInterface, QGLFormat glFormat):
     QGLViewer(glFormat),
     _isInitialized(false),
     _isWireframe(false),
-    _currentFrame(1)
+    _currentFrame(1),
+    _isTessellated(false)
 {
     _userInterface = userInterface;
     resize(1024, 768);
@@ -54,6 +55,7 @@ void SceneViewer::loadModel(std::string path)
 
 void SceneViewer::toggleTessellation(bool value)
 {
+    _isTessellated = value;
     if (value)
         initializeTS();
     _renderer->loadShaders(value);
@@ -65,7 +67,7 @@ void SceneViewer::initializeTS()
 {
     GLint maxPatchVertices = 0;
     glGetIntegerv(GL_MAX_PATCH_VERTICES, &maxPatchVertices);
-    printf("Max supported patch vertices %d.\n", maxPatchVertices);
+    //printf("Max supported patch vertices %d.\n", maxPatchVertices);
 }
 
 bool SceneViewer::isReady()
@@ -86,21 +88,38 @@ void SceneViewer::playPause()
     _player->playPause();
 }
 
+void SceneViewer::setInnerTL(int value)
+{
+    _scene->getMesh(_currentFrame-1)->setInnerTL(value);
+    update();
+}
+
+void SceneViewer::setOuterTL(int value)
+{
+    _scene->getMesh(_currentFrame-1)->setOuterTL(value);
+    update();
+}
+
 void SceneViewer::resizeGL(int width, int height)
 {
     _renderer->resize(width, height);
+}
+
+void SceneViewer::setCurrentFrame(const int currentFrame)
+{
+    _currentFrame = currentFrame;
+    update();
 }
 
 void SceneViewer::animate()
 {
     _currentFrame = _player->getNextFrame();
     _userInterface->sFrames->setValue(_currentFrame);
-    //_scene->loadAnimation(_animationPath, currentFrame);
 }
 
 void SceneViewer::draw()
 {
-    bool animation = (animationIsStarted() || _userInterface->widgetPlayer->isEnabled());
+    bool animation = (animationIsStarted() || _userInterface->widgetPlayer->isEnabled() || _currentFrame != 1);
     _renderer->render(_currentFrame, animation);
 }
 
