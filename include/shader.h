@@ -16,7 +16,6 @@ public:
 
     void initialize();
     void load(QStringList attributes, QStringList uniforms);
-    //void load();
     void bind();
 
     GLint getVariable(std::string strVariable);

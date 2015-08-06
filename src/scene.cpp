@@ -126,6 +126,12 @@ void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &
     _loaded = true;
 }
 
+void Scene::updateObjectShaders()
+{
+    foreach (Mesh *mesh, _meshes)
+        mesh->getMaterial()->setShader("render");
+}
+
 void Scene::setLight(Light *light)
 {
     _light.reset(light);

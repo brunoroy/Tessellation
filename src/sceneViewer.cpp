@@ -57,6 +57,7 @@ void SceneViewer::toggleTessellation(bool value)
     if (value)
         initializeTS();
     _renderer->loadShaders(value);
+    _scene->updateObjectShaders();
     update();
 }
 

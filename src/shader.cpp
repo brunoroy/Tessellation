@@ -185,7 +185,7 @@ void Shader::transmitUniform(QString name, const glm::vec3 &vec3)
 
 void Shader::transmitUniform(QString name, const glm::mat3 &mat3)
 {
-    glUniformMatrix3fv(_uniforms.value(name, -1), 1, GL_TRUE, &mat3[0][0]);//glm::value_ptr(mat3));
+    glUniformMatrix3fv(_uniforms.value(name, -1), 1, GL_TRUE, &mat3[0][0]);
 }
 
 void Shader::transmitUniform(QString name, const glm::mat4 &mat4)

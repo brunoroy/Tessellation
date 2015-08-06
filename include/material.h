@@ -7,14 +7,11 @@
 class Material
 {
 public:
-    Material(QString value)
-    {
-        _shader.reset(Shaders::getShader(value));
-    }
-
+    Material(QString value) {_shader.reset(Shaders::getShader(value));}
     ~Material() {}
-    void initialize();
 
+    void initialize();
+    void setShader(QString value) {_shader.reset(Shaders::getShader(value));}
     Shader* getShader() {return _shader.get();}
     virtual void bind() {}
 

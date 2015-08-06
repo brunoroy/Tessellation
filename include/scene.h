@@ -50,6 +50,8 @@ public:
     void setLight(Light *light);
     Light* getLight() {return _light.get();}
 
+    void updateObjectShaders();
+
 private:
     std::shared_ptr<Camera> _camera;
     std::vector<Mesh*> _meshes;
