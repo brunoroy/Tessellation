@@ -12,6 +12,8 @@ Scene::Scene(Camera *camera):
     _camera->setPivotPoint(Vec(0.0, 0.0, 0.0));
     _camera->setUpVector(Vec(0.0, 1.0, 0.0));
     _camera->setPosition(Vec(0.0, 0.0, 60.0));
+
+    //_grid.reset(new SpatialGrid(Volume(1.0f, 1.0f, 1.0f)));
 }
 
 Scene::~Scene()
@@ -84,6 +86,30 @@ void Scene::loadModel(std::string path)
     ((MaterialDefault*)(mesh->getMaterial()))->setTexture(basicTexture);
     mesh->scale(glm::vec3(10.0f, 10.0f, 10.0f));
     addMesh(mesh);
+    //updateGrid(mesh);
+}
+
+void Scene::updateGrid(Mesh *mesh)
+{
+    for (int i = 0; i < mesh->getTriangleCount(); i++)
+    {
+        //std::clog << "processing polygon " << i << "." << std::endl;
+        glm::vec3 vertices[3];
+        for (int v = 0; v < 3; v++)
+        {
+            uint vertexIndex = mesh->getIndices().at(i*3+v);
+            //std::clog << "index: " << vertexIndex << std::endl;
+            vertices[v] = mesh->getPositions().at(vertexIndex);
+            //std::clog << "v[" << v << "]: { " << vertices[v].x << "," << vertices[v].y << "," << vertices[v].z << "}" << std::endl;
+        }
+        _grid->insertPolygon(i, vertices);
+    }
+}
+
+void Scene::updateGrid(InputPoints *points)
+{
+    for (int i = 0; i < points->getPointCount(); i++)
+        _grid->insertPoint(i, points->getPoint(i));
 }
 
 void Scene::loadLight()

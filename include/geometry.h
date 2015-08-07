@@ -92,6 +92,25 @@ struct Polygon
     glm::vec3 normals[3];
 };
 
+class InputPoints
+{
+public:
+    InputPoints(std::string path)
+    {
+        readInputFile(path);
+    }
+    ~InputPoints() {}
+
+    void readInputFile(std::string path);
+    std::vector<glm::vec3> getPoints() {return _points;}
+    size_t getPointCount() {return _pointCount;}
+    glm::vec3 getPoint(const int index) {return _points.at(index);}
+
+private:
+    std::vector<glm::vec3> _points;
+    size_t _pointCount;
+};
+
 class Mesh
 {
 public:
@@ -136,6 +155,8 @@ public:
 
     void setInnerTL(int value) {_innerTL = value;}
     void setOuterTL(int value) {_outerTL = value;}
+
+    uint getTriangleCount() {return _triangleCount;}
 
 protected:
     std::vector<uint> _indices;
@@ -183,6 +204,12 @@ private:
     GLuint _normalBuffer;
 
     bool _invertNormals;
+};
+
+class Geometry
+{
+public:
+    static float getDistance(Polygon polygon, glm::vec3 point);
 };
 
 #endif // MESH_H

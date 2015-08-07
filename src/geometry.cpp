@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include "mesh.h"
+#include "geometry.h"
 
 #include <QList>
 #include <QFile>
@@ -320,4 +320,92 @@ bool Mesh::loadModelWavefront(QString filename)
     _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
     return true;
+}
+
+void InputPoints::readInputFile(std::string path)
+{
+    std::string line;
+    std::ifstream inputFile(path);
+    if (inputFile.is_open())
+    {
+        QStringList properties;
+        //std::vector<glm::vec3> positions;
+        //std::vector<glm::vec3> normals;
+
+        while (getline(inputFile, line))
+        {
+            QString value(line.c_str());
+            if (value.contains("element vertex"))
+            {
+                QStringList values = value.split(" ");
+                _pointCount = values.at(2).toInt();
+                std::clog << "points: " << _pointCount << std::endl;
+            }
+            else if (value.contains("property float"))
+            {
+                QStringList values = value.split(" ");
+                properties.push_back(values.at(2));
+            }
+            else if (value.compare("end_header") == 0)
+            {
+                glm::vec3 position, normal;
+                for (int i = 0; i < _pointCount; i++)
+                {
+                    if (getline(inputFile, line))
+                    {
+                        QString value(line.c_str());
+                        QStringList values = value.split(" ");
+                        for (int p = 0; p < values.size(); p++)
+                        {
+                            if (properties.at(p).compare("x") == 0)
+                                position.x = values.at(p).toFloat();
+                            else if (properties.at(p).compare("y") == 0)
+                                position.y = values.at(p).toFloat();
+                            else if (properties.at(p).compare("z") == 0)
+                                position.z = values.at(p).toFloat();
+                            else if (properties.at(p).compare("nx") == 0)
+                                normal.x = values.at(p).toFloat();
+                            else if (properties.at(p).compare("ny") == 0)
+                                normal.y = values.at(p).toFloat();
+                            else if (properties.at(p).compare("nz") == 0)
+                                normal.z = values.at(p).toFloat();
+                        }
+
+                        _points.push_back(position);
+                        std::clog << "points: " << _points.size() << std::endl;
+                        //positions.push_back(position);
+                        //normals.push_back(normal);
+                    }
+                }
+            }
+        }
+
+        std::cout << "Read " << _pointCount << " points." << std::endl;
+
+        inputFile.close();
+    }
+}
+
+float Geometry::getDistance(Polygon polygon, glm::vec3 point)
+{
+    glm::vec3 p0 = polygon.positions[0];
+    glm::vec3 v1 = polygon.positions[1] - p0;
+    glm::vec3 v2 = polygon.positions[2] - p0;
+
+    glm::vec3 n = glm::cross(v1, v2);
+
+    float sn = -glm::dot(n, point-p0);
+    float sd = glm::dot(n, n);
+    float d = sn / sd;
+
+    return d;
+
+    /*float    sb, sn, sd;
+
+    sn = -dot( PL.n, (P - PL.V0));
+    sd = dot(PL.n, PL.n);
+    sb = sn / sd;
+
+    *B = P + sb * PL.n;
+    return d(P, *B);*/
 }

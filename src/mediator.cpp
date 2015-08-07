@@ -199,7 +199,7 @@ void Mediator::browseInputPoints()
             std::string path(std::string(files.at(0).toStdString()));
             _userInterface.eInputPointsPath->setText(QString(path.c_str()));
             _userInterface.widgetDisplacementProperties->setEnabled(true);
-            //_sceneViewer->loadModel(path);
+            _sceneViewer->loadInputPoints(path);
         }
     }
 }

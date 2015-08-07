@@ -1,12 +1,14 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "mesh.h"
-#include <QGLViewer/qglviewer.h>
-#include <vector>
-#include "light.h"
-
 #include <QProgressBar>
+#include <vector>
+
+#include "geometry.h"
+#include "light.h"
+#include "spatialGrid.h"
+
+#include <QGLViewer/qglviewer.h>
 
 typedef long long ll;
 
@@ -51,11 +53,14 @@ public:
     Light* getLight() {return _light.get();}
 
     void updateObjectShaders();
+    void updateGrid(Mesh *mesh);
+    void updateGrid(InputPoints *points);
 
 private:
     std::shared_ptr<Camera> _camera;
     std::vector<Mesh*> _meshes;
     std::shared_ptr<Light> _light;
+    std::shared_ptr<SpatialGrid> _grid;
 
     glm::mat4 _modelView;
     glm::mat4 _projection;

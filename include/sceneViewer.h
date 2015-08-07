@@ -31,6 +31,7 @@ public:
     void loadModel(std::string path);
     void playPause();
     void setCurrentFrame(const int currentFrame);
+    void loadInputPoints(std::string path);
 
     void setInnerTL(int value);
     void setOuterTL(int value);
