@@ -35,6 +35,12 @@ public slots:
     void setInnerLevel(int level);
     void setOuterLevel(int level);
 
+    //displacement
+    void toggleDisplacement(bool value);
+    void setDensity(int value);
+    void setDistanceEpsilon(int value);
+    void browseInputPoints();
+
     //player
     void changeCurrentFrame(int currentFrame);
     void playPause();

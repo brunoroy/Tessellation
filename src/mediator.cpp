@@ -57,6 +57,12 @@ void Mediator::initSignalSlot()
     connect(_userInterface.sOuterLevel, SIGNAL(valueChanged(int)), this, SLOT(setOuterLevel(int)));
     connect(_userInterface.actionTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
 
+    //displacement
+    connect(_userInterface.sDensity, SIGNAL(valueChanged(int)), this, SLOT(setDensity(int)));
+    connect(_userInterface.sDistanceEpsilon, SIGNAL(valueChanged(int)), this, SLOT(setDistanceEpsilon(int)));
+    connect(_userInterface.bBrowseInputPoints, SIGNAL(pressed()), this, SLOT(browseInputPoints()));
+    connect(_userInterface.ckDisplacement, SIGNAL(toggled(bool)), this, SLOT(toggleDisplacement(bool)));
+
     //player
     connect(_userInterface.sFrames, SIGNAL(valueChanged(int)), this, SLOT(changeCurrentFrame(int)));
     connect(_userInterface.bPlayPause, SIGNAL(pressed()), this, SLOT(playPause()));
@@ -89,6 +95,12 @@ void Mediator::defaultValues()
     _userInterface.fTessellation->setEnabled(false);
     _userInterface.sInnerLevel->setValue(2);
     _userInterface.sOuterLevel->setValue(1);
+
+    //displacement
+    _userInterface.fDisplacement->setEnabled(false);
+    _userInterface.widgetDisplacementProperties->setEnabled(false);
+    _userInterface.sDensity->setValue(10);
+    _userInterface.sDistanceEpsilon->setValue(10);
 }
 
 void Mediator::toggleTessellation(bool value)
@@ -115,6 +127,23 @@ void Mediator::setOuterLevel(int level)
     _userInterface.eOuterLevel->setText(QString::number(level));
     if (_sceneViewer->isTessellated())
         _sceneViewer->setOuterTL(level);
+}
+
+void Mediator::setDensity(int value)
+{
+    float density = static_cast<float>(value)/10.0f;
+    _userInterface.eDensity->setText(QString::number(density));
+}
+
+void Mediator::setDistanceEpsilon(int value)
+{
+    float distanceEpsilon = static_cast<float>(value)/10.0f;
+    _userInterface.eDistanceEpsilon->setText(QString::number(distanceEpsilon));
+}
+
+void Mediator::toggleDisplacement(bool value)
+{
+    _userInterface.fDisplacement->setEnabled(value);
 }
 
 void Mediator::changeCurrentFrame(int currentFrame)
@@ -155,6 +184,22 @@ void Mediator::importAnimation()
             _sceneViewer->loadAnimation(path, files.size());
             _userInterface.progressBar->setVisible(false);
             _userInterface.actionPlayer->setEnabled(true);
+        }
+    }
+}
+
+void Mediator::browseInputPoints()
+{
+    QFileDialog dialog;
+    if (dialog.exec())
+    {
+        QStringList files = dialog.selectedFiles();
+        if (!files.isEmpty())
+        {
+            std::string path(std::string(files.at(0).toStdString()));
+            _userInterface.eInputPointsPath->setText(QString(path.c_str()));
+            _userInterface.widgetDisplacementProperties->setEnabled(true);
+            //_sceneViewer->loadModel(path);
         }
     }
 }
