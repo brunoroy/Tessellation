@@ -13,7 +13,7 @@ Scene::Scene(Camera *camera):
     _camera->setUpVector(Vec(0.0, 1.0, 0.0));
     _camera->setPosition(Vec(0.0, 0.0, 60.0));
 
-    //_grid.reset(new SpatialGrid(Volume(1.0f, 1.0f, 1.0f)));
+    _grid.reset(new SpatialGrid(Volume(1.0f, 1.0f, 1.0f)));
 }
 
 Scene::~Scene()

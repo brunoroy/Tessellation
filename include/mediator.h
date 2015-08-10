@@ -34,6 +34,7 @@ public slots:
     void toggleTessellation(bool value);
     void setInnerLevel(int level);
     void setOuterLevel(int level);
+    void setUniform(bool value);
 
     //displacement
     void toggleDisplacement(bool value);

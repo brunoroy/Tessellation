@@ -56,6 +56,7 @@ void Mediator::initSignalSlot()
     connect(_userInterface.sInnerLevel, SIGNAL(valueChanged(int)), this, SLOT(setInnerLevel(int)));
     connect(_userInterface.sOuterLevel, SIGNAL(valueChanged(int)), this, SLOT(setOuterLevel(int)));
     connect(_userInterface.actionTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
+    connect(_userInterface.ckUniformTessellation, SIGNAL(toggled(bool)), this, SLOT(setUniform(bool)));
 
     //displacement
     connect(_userInterface.sDensity, SIGNAL(valueChanged(int)), this, SLOT(setDensity(int)));
@@ -89,6 +90,12 @@ void Mediator::showPlayer(bool value)
     _userInterface.widgetPlayer->setVisible(value);
 }
 
+void Mediator::setUniform(bool value)
+{
+    _userInterface.sOuterLevel->setEnabled(!value);
+    _userInterface.eOuterLevel->setEnabled(!value);
+}
+
 void Mediator::defaultValues()
 {
     //tessellation
@@ -119,7 +126,11 @@ void Mediator::setInnerLevel(int level)
 {
     _userInterface.eInnerLevel->setText(QString::number(level));
     if (_sceneViewer->isTessellated())
+    {
         _sceneViewer->setInnerTL(level);
+        if (_userInterface.ckUniformTessellation->isChecked())
+            _sceneViewer->setOuterTL(level);
+    }
 }
 
 void Mediator::setOuterLevel(int level)
