@@ -202,6 +202,7 @@ void Mediator::importAnimation()
 void Mediator::browseInputPoints()
 {
     QFileDialog dialog;
+    dialog.setDirectory("data/models");
     if (dialog.exec())
     {
         QStringList files = dialog.selectedFiles();
