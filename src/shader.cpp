@@ -111,6 +111,7 @@ void Shader::load(QStringList attributes, QStringList uniforms)
 
 void Shader::enable()
 {
+    std::clog << __FUNCTION__ << std::endl;
     glUseProgram(_programId);
 }
 

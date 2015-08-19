@@ -26,6 +26,9 @@ void SceneViewer::init()
     setSceneCenter(Vec(0.0, 0.0, 0.0));
     setBackgroundColor(Qt::black);
 
+    QSize screenSize = _userInterface->widgetViewer->size();
+    glViewport(0, 0, screenSize.width(), screenSize.height());
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glewExperimental = GL_TRUE;
     glewInit();
@@ -74,8 +77,9 @@ void SceneViewer::toggleTessellation(bool value)
 void SceneViewer::initializeTS()
 {
     GLint maxPatchVertices = 0;
-    glGetIntegerv(GL_MAX_PATCH_VERTICES, &maxPatchVertices);
-    //printf("Max supported patch vertices %d.\n", maxPatchVertices);
+    glGetIntegerv(GL_MAX_TESS_GEN_LEVEL, &maxPatchVertices);
+    _userInterface->sInnerLevel->setMaximum(maxPatchVertices);
+    _userInterface->sOuterLevel->setMaximum(maxPatchVertices);
 }
 
 bool SceneViewer::isReady()
