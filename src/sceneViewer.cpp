@@ -58,9 +58,7 @@ void SceneViewer::loadModel(std::string path)
 
 void SceneViewer::loadInputPoints(std::string path)
 {
-    std::clog << "reading points..." << std::endl;
     std::shared_ptr<InputPoints> inputPoints(new InputPoints(path));
-    std::clog << "points loaded." << std::endl;
     //_scene->updateGrid(inputPoints.get());
 }
 

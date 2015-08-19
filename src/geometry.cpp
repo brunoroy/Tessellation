@@ -329,8 +329,6 @@ void InputPoints::readInputFile(std::string path)
     if (inputFile.is_open())
     {
         QStringList properties;
-        //std::vector<glm::vec3> positions;
-        //std::vector<glm::vec3> normals;
 
         while (getline(inputFile, line))
         {
@@ -339,7 +337,6 @@ void InputPoints::readInputFile(std::string path)
             {
                 QStringList values = value.split(" ");
                 _pointCount = values.at(2).toInt();
-                std::clog << "points: " << _pointCount << std::endl;
             }
             else if (value.contains("property float"))
             {
@@ -357,24 +354,24 @@ void InputPoints::readInputFile(std::string path)
                         QStringList values = value.split(" ");
                         for (int p = 0; p < values.size(); p++)
                         {
-                            if (properties.at(p).compare("x") == 0)
-                                position.x = values.at(p).toFloat();
-                            else if (properties.at(p).compare("y") == 0)
-                                position.y = values.at(p).toFloat();
-                            else if (properties.at(p).compare("z") == 0)
-                                position.z = values.at(p).toFloat();
-                            else if (properties.at(p).compare("nx") == 0)
-                                normal.x = values.at(p).toFloat();
-                            else if (properties.at(p).compare("ny") == 0)
-                                normal.y = values.at(p).toFloat();
-                            else if (properties.at(p).compare("nz") == 0)
-                                normal.z = values.at(p).toFloat();
+                            if (!values.at(p).isEmpty())
+                            {
+                                if (properties.at(p).compare("x") == 0)
+                                    position.x = values.at(p).toFloat();
+                                else if (properties.at(p).compare("y") == 0)
+                                    position.y = values.at(p).toFloat();
+                                else if (properties.at(p).compare("z") == 0)
+                                    position.z = values.at(p).toFloat();
+                                else if (properties.at(p).compare("nx") == 0)
+                                    normal.x = values.at(p).toFloat();
+                                else if (properties.at(p).compare("ny") == 0)
+                                    normal.y = values.at(p).toFloat();
+                                else if (properties.at(p).compare("nz") == 0)
+                                    normal.z = values.at(p).toFloat();
+                            }
                         }
 
                         _points.push_back(position);
-                        std::clog << "points: " << _points.size() << std::endl;
-                        //positions.push_back(position);
-                        //normals.push_back(normal);
                     }
                 }
             }
