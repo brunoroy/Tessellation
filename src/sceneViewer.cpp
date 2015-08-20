@@ -26,8 +26,8 @@ void SceneViewer::init()
     setSceneCenter(Vec(0.0, 0.0, 0.0));
     setBackgroundColor(Qt::black);
 
-    QSize screenSize = _userInterface->widgetViewer->size();
-    glViewport(0, 0, screenSize.width(), screenSize.height());
+    //QSize screenSize = _userInterface->widgetViewer->size();
+    //glViewport(0, 0, screenSize.width(), screenSize.height());
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glewExperimental = GL_TRUE;
@@ -58,6 +58,8 @@ void SceneViewer::loadModel(std::string path)
 
 void SceneViewer::loadInputPoints(std::string path)
 {
+    _scene->loadScene(path, true);
+    //_scene->loadScene(path);
     //std::shared_ptr<InputPoints> inputPoints(new InputPoints(path));
     //_scene->updateGrid(inputPoints.get());
 }
@@ -100,13 +102,13 @@ void SceneViewer::playPause()
 
 void SceneViewer::setInnerTL(int value)
 {
-    _scene->getMesh(_currentFrame-1)->setInnerTL(value);
+    _scene->getGeometry(_currentFrame-1)->setInnerTL(value);
     update();
 }
 
 void SceneViewer::setOuterTL(int value)
 {
-    _scene->getMesh(_currentFrame-1)->setOuterTL(value);
+    _scene->getGeometry(_currentFrame-1)->setOuterTL(value);
     update();
 }
 

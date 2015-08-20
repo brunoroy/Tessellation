@@ -13,7 +13,6 @@ Geometry::Geometry():
     _translation(1.0f),
     _rotation(1.0f),
     _scaling(1.0f),
-    _objModel(false),
     _mvp(glm::mat4(1.0f)),
     _innerTL(1),
     _outerTL(1),
@@ -39,9 +38,6 @@ Geometry::Geometry(QString filename, const bool isCloud)
                 loadInputPoints(filename);
             else
                 loadModelPLY(filename);
-
-
-        _objModel = true;
     }
 }
 
@@ -129,10 +125,19 @@ void Geometry::draw()
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indiceBuffer);
-    if (doTessellation)
-        glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, 0);
-    else
-        glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    if (_isCloud)
+    {
+        glPointSize(2.0f);
+        glDrawArrays(GL_POINTS, 0, _indices.size());
+        glPointSize(1.0f);
+    }
+    else //mesh
+    {
+        if (doTessellation)
+            glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, 0);
+        else
+            glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    }
 
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
@@ -327,7 +332,7 @@ bool Geometry::loadModelWavefront(QString filename)
     return true;
 }
 
-void Geometry::loadInputPoints(QString filename)
+bool Geometry::loadInputPoints(QString filename)
 {
     std::string line;
     std::ifstream inputFile(filename.toStdString());
@@ -377,6 +382,7 @@ void Geometry::loadInputPoints(QString filename)
                         }
 
                         _positions.push_back(position);
+                        _indices.push_back(_positions.size()-1);
                     }
                 }
             }
@@ -385,7 +391,13 @@ void Geometry::loadInputPoints(QString filename)
         std::cout << "Read " << _vertexCount << " points." << std::endl;
 
         inputFile.close();
+
+        _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
+
+        return true;
     }
+
+    return false;
 }
 
 float GeometryTools::getDistance(Polygon polygon, glm::vec3 point)

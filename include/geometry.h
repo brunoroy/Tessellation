@@ -121,7 +121,7 @@ public:
 
     bool loadModelWavefront(QString filename);
     bool loadModelPLY(QString filename);
-    void loadInputPoints(QString filename);
+    bool loadInputPoints(QString filename);
     void addVertex(Vertex vertex)
     {
         _positions.push_back(vertex.getPosition());
@@ -142,8 +142,6 @@ public:
     void scale(glm::vec3 vector) {_scaling = glm::scale(_scaling, vector);}
     glm::mat4 getModelMatrix() {return _translation * _rotation * _scaling;}
 
-    bool isObjModel() {return _objModel;}
-
     void initialize();
     void preDraw();
     void draw();
@@ -153,6 +151,7 @@ public:
 
     bool isQuads() {return _indices.size()%3 == 0;}
     bool isTriangles() {return _indices.size()%4 == 0;}
+    bool isCloud() {return _isCloud;}
 
     void setInnerTL(int value) {_innerTL = value;}
     void setOuterTL(int value) {_outerTL = value;}
@@ -175,8 +174,6 @@ protected:
     int _innerTL;
     int _outerTL;
 
-    bool _isCloud;
-
     std::vector<Polygon> _polygons;
     std::vector<Vertex> _vertices;
 
@@ -184,7 +181,7 @@ protected:
 
 private:
     bool _hasNormals;
-    bool _objModel;
+    bool _isCloud;
 
     uint _locationVertices;
     uint _locationTextureCoordinates;

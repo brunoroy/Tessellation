@@ -74,12 +74,12 @@ void Scene::resize(uint width, uint height)
     _camera->setAspectRatio(width/height);
 }
 
-void Scene::loadModel(std::string path)
+void Scene::loadModel(std::string path, const bool isCloud)
 {
     Texture::resetUnit();
     Texture* basicTexture = Texture::newFromNextUnit();
 
-    Geometry* geometry = new Geometry(QString(path.c_str()));
+    Geometry* geometry = new Geometry(QString(path.c_str()), isCloud);
     basicTexture->load("data/textures/white.jpg");
     basicTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
     basicTexture->initialize();
@@ -122,9 +122,11 @@ void Scene::loadLight()
     setLight(sun);
 }
 
-void Scene::loadScene(std::string path)
+void Scene::loadScene(std::string path, const bool isCloud)
 {
-    loadModel(path);
+    std::clog << "loading model (cloud=" << isCloud << ")...\n";
+    loadModel(path, isCloud);
+    std::clog << "loading light...\n";
     loadLight();
 
     std::clog << "meshes: " << _geometries.size() << std::endl;

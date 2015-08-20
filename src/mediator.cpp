@@ -51,6 +51,7 @@ void Mediator::initSignalSlot()
     connect(_userInterface.actionDefaultValues, SIGNAL(triggered()), this, SLOT(defaultValues()));
     connect(_userInterface.actionPlayer, SIGNAL(triggered(bool)), this, SLOT(showPlayer(bool)));
     connect(_userInterface.actionReset, SIGNAL(triggered()), this, SLOT(resetScene()));
+    connect(_userInterface.actionImportInputPoints, SIGNAL(triggered()), this, SLOT(browseInputPoints()));
 
     //tessellation
     connect(_userInterface.ckTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
@@ -162,6 +163,7 @@ void Mediator::setDistanceEpsilon(int value)
 void Mediator::toggleDisplacement(bool value)
 {
     _userInterface.fDisplacement->setEnabled(value);
+    _userInterface.actionImportInputPoints->setEnabled(value);
 }
 
 void Mediator::showInputPoints(bool value)
@@ -214,17 +216,20 @@ void Mediator::importAnimation()
 
 void Mediator::browseInputPoints()
 {
-    QFileDialog dialog;
-    dialog.setDirectory("data/models");
-    if (dialog.exec())
+    if (_userInterface.ckDisplacement->isChecked())
     {
-        QStringList files = dialog.selectedFiles();
-        if (!files.isEmpty())
+        QFileDialog dialog;
+        dialog.setDirectory("data/models");
+        if (dialog.exec())
         {
-            std::string path(std::string(files.at(0).toStdString()));
-            _userInterface.eInputPointsPath->setText(QString(path.c_str()));
-            _sceneViewer->loadInputPoints(path);
-            _userInterface.widgetDisplacementProperties->setEnabled(true);
+            QStringList files = dialog.selectedFiles();
+            if (!files.isEmpty())
+            {
+                std::string path(std::string(files.at(0).toStdString()));
+                _userInterface.eInputPointsPath->setText(QString(path.c_str()));
+                _sceneViewer->loadInputPoints(path);
+                _userInterface.widgetDisplacementProperties->setEnabled(true);
+            }
         }
     }
 }

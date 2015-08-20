@@ -42,9 +42,9 @@ public:
     void strafeRight();
 
     glm::mat4 getCurrentMVP();
-    void loadModel(std::string path);
+    void loadModel(std::string path, const bool isCloud = false);
     void loadLight();
-    void loadScene(std::string path);
+    void loadScene(std::string path, const bool isCloud = false);
     void loadAnimation(std::string path, const int frameCount, QProgressBar &progress);
     void reset()
     {
