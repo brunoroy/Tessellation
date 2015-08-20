@@ -10,8 +10,11 @@ Scene::Scene(Camera *camera):
     _camera->setType(Camera::PERSPECTIVE);
     _camera->setZNearCoefficient(0.00001);
     _camera->setPivotPoint(Vec(0.0, 0.0, 0.0));
-    _camera->setUpVector(Vec(0.0, 1.0, 0.0));
-    _camera->setPosition(Vec(0.0, 0.0, 60.0));
+    _initialCameraUpVector = Vec(0.0, 1.0, 0.0);
+    _camera->setUpVector(_initialCameraUpVector);
+    _initialCameraDistance = 50.0;
+    _initialCameraPosition = Vec(0.0, 0.0, _initialCameraDistance);
+    _camera->setPosition(_initialCameraPosition);
 
     _grid.reset(new SpatialGrid(Volume(1.0f, 1.0f, 1.0f)));
 }
@@ -154,7 +157,8 @@ void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &
 void Scene::updateObjectShaders()
 {
     foreach (Geometry *geometry, _geometries)
-        geometry->getMaterial()->setShader("render");
+        if (!geometry->isCloud())
+            geometry->getMaterial()->setShader("render");
 }
 
 void Scene::setLight(Light *light)
@@ -192,4 +196,35 @@ void Scene::strafeRight()
     Vec direction = _camera.get()->rightVector()*_moveSpeed;
     Vec newPosition(position.x+direction.x, position.y, position.z+direction.z);
     _camera.get()->setPosition(newPosition);
+}
+
+void Scene::frontCameraView()
+{
+    _camera->setPosition(_initialCameraPosition);
+    _camera->setUpVector(_initialCameraUpVector);
+    _camera.get()->setOrientation(0.0, 0.0);
+}
+
+void Scene::rightCameraView()
+{
+    _camera->setPosition(Vec(_initialCameraDistance, 0.0, 0.0));
+    _camera->setUpVector(_initialCameraUpVector);
+    _camera.get()->setOrientation(M_PI/2.0, 0.0);
+}
+
+void Scene::topCameraView()
+{
+    _camera->setPosition(Vec(0.0, _initialCameraDistance, 0.0));
+    _camera->setUpVector(Vec(0.0, 0.0, -1.0));
+    _camera.get()->setOrientation(0.0, M_PI/2.0);
+}
+
+bool Scene::toggleCameraProjectionType()
+{
+    if (_camera.get()->type() == Camera::PERSPECTIVE)
+        _camera.get()->setType(Camera::ORTHOGRAPHIC);
+    else
+        _camera.get()->setType(Camera::PERSPECTIVE);
+
+    return (_camera.get()->type() == Camera::PERSPECTIVE);
 }

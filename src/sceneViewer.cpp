@@ -66,11 +66,15 @@ void SceneViewer::loadInputPoints(std::string path)
 
 void SceneViewer::toggleTessellation(bool value)
 {
+    std::clog << "loading tessellation...\n";
     _isTessellated = value;
     if (value)
         initializeTS();
+    std::clog << "loading shaders...\n";
     _renderer->loadShaders(value);
+    std::clog << "updating objects...\n";
     _scene->updateObjectShaders();
+    std::clog << "rendering...\n";
     update();
 }
 
@@ -160,6 +164,33 @@ void SceneViewer::keyPressEvent(QKeyEvent* event)
             else
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             _isWireframe = !_isWireframe;
+        }
+        break;
+        case Qt::Key_1:
+        {
+            _scene->frontCameraView();
+            _userInterface->statusBar->showMessage("Front view", 1000);
+        }
+        break;
+        case Qt::Key_3:
+        {
+            _scene->rightCameraView();
+            _userInterface->statusBar->showMessage("Right view", 1000);
+        }
+        break;
+        case Qt::Key_5:
+        {
+            bool perspective = _scene->toggleCameraProjectionType();
+            if (perspective)
+                _userInterface->statusBar->showMessage("Perspective projection", 1000);
+            else
+                _userInterface->statusBar->showMessage("Orthographic projection", 1000);
+        }
+        break;
+        case Qt::Key_7:
+        {
+            _scene->topCameraView();
+            _userInterface->statusBar->showMessage("Top view", 1000);
         }
         break;
     }

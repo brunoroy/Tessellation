@@ -62,6 +62,11 @@ public:
     void updateGrid(Geometry *geometry);
     void updateGrid(std::vector<glm::vec3> points);
 
+    void frontCameraView();
+    void rightCameraView();
+    void topCameraView();
+    bool toggleCameraProjectionType();
+
 private:
     std::shared_ptr<Camera> _camera;
     std::vector<Geometry*> _geometries;
@@ -71,6 +76,10 @@ private:
     glm::mat4 _modelView;
     glm::mat4 _projection;
     glm::mat4 _mvp;
+
+    qreal _initialCameraDistance;
+    Vec _initialCameraPosition;
+    Vec _initialCameraUpVector;
 
     bool _loaded;
     float _moveSpeed;
