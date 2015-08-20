@@ -39,6 +39,7 @@ Geometry::Geometry(QString filename, const bool isCloud)
             else
                 loadModelPLY(filename);
     }
+    _isCloud = isCloud;
 }
 
 Geometry::~Geometry()

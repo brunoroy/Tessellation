@@ -59,7 +59,6 @@ void Scene::draw(const int currentFrame, const bool animation)
         {
             foreach (Geometry *geometry, _geometries)
             {
-                //std::clog << geometry->getTriangleCount() << " triangles drawn.\n";
                 geometry->preDraw();
                 geometry->setMVP(mvp);
                 geometry->draw();
@@ -124,12 +123,9 @@ void Scene::loadLight()
 
 void Scene::loadScene(std::string path, const bool isCloud)
 {
-    std::clog << "loading model (cloud=" << isCloud << ")...\n";
     loadModel(path, isCloud);
-    std::clog << "loading light...\n";
     loadLight();
 
-    std::clog << "meshes: " << _geometries.size() << std::endl;
     foreach (Geometry *geometry, _geometries)
         geometry->initialize();
 
