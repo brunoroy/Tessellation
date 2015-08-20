@@ -23,6 +23,11 @@ public:
     void drawCube();
     void drawPlane();
     bool isReady();
+    void reset()
+    {
+        _scene->reset();
+        update();
+    }
 
     void toggleTessellation(bool value);
     void initializeTS();

@@ -25,6 +25,10 @@ Shader::Shader(QString value, QString filename, bool doTessellation)
 
 Shader::~Shader()
 {
+    _shaderFilenames.clear();
+    _shaderIds.clear();
+    _attributes.clear();
+    _uniforms.clear();
 }
 
 char* Shader::loadShaderFile(QString path)

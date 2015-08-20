@@ -92,7 +92,7 @@ struct Polygon
     glm::vec3 normals[3];
 };
 
-class InputPoints
+/*class InputPoints
 {
 public:
     InputPoints(std::string path)
@@ -101,7 +101,7 @@ public:
     }
     ~InputPoints() {}
 
-    void readInputFile(std::string path);
+    //void readInputFile(std::string path);
     std::vector<glm::vec3> getPoints() {return _points;}
     size_t getPointCount() {return _pointCount;}
     glm::vec3 getPoint(const int index) {return _points.at(index);}
@@ -109,18 +109,19 @@ public:
 private:
     std::vector<glm::vec3> _points;
     size_t _pointCount;
-};
+};*/
 
 class Mesh
 {
 public:
     Mesh();
     Mesh(Mesh* mesh);
-    Mesh(QString filename);
+    Mesh(QString filename, const bool isCloud = false);
     ~Mesh();
 
     bool loadModelWavefront(QString filename);
     bool loadModelPLY(QString filename);
+    void loadInputPoints(QString filename);
     void addVertex(Vertex vertex)
     {
         _positions.push_back(vertex.getPosition());
@@ -173,6 +174,8 @@ protected:
 
     int _innerTL;
     int _outerTL;
+
+    bool _isCloud;
 
     std::vector<Polygon> _polygons;
     std::vector<Vertex> _vertices;

@@ -50,6 +50,7 @@ void Mediator::initSignalSlot()
     connect(_userInterface.actionShaders, SIGNAL(triggered(bool)), this, SLOT(showShaders(bool)));
     connect(_userInterface.actionDefaultValues, SIGNAL(triggered()), this, SLOT(defaultValues()));
     connect(_userInterface.actionPlayer, SIGNAL(triggered(bool)), this, SLOT(showPlayer(bool)));
+    connect(_userInterface.actionReset, SIGNAL(triggered()), this, SLOT(resetScene()));
 
     //tessellation
     connect(_userInterface.ckTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
@@ -63,6 +64,7 @@ void Mediator::initSignalSlot()
     connect(_userInterface.sDistanceEpsilon, SIGNAL(valueChanged(int)), this, SLOT(setDistanceEpsilon(int)));
     connect(_userInterface.bBrowseInputPoints, SIGNAL(pressed()), this, SLOT(browseInputPoints()));
     connect(_userInterface.ckDisplacement, SIGNAL(toggled(bool)), this, SLOT(toggleDisplacement(bool)));
+    connect(_userInterface.ckShowInputPoints, SIGNAL(toggled(bool)), this, SLOT(showInputPoints(bool)));
 
     //player
     connect(_userInterface.sFrames, SIGNAL(valueChanged(int)), this, SLOT(changeCurrentFrame(int)));
@@ -78,6 +80,11 @@ void Mediator::initUserInterface()
     showPlayer(false);
 
     _userInterface.progressBar->setVisible(false);
+}
+
+void Mediator::resetScene()
+{
+    _sceneViewer->reset();
 }
 
 void Mediator::showShaders(bool value)
@@ -157,6 +164,11 @@ void Mediator::toggleDisplacement(bool value)
     _userInterface.fDisplacement->setEnabled(value);
 }
 
+void Mediator::showInputPoints(bool value)
+{
+    std::clog << __FUNCTION__ << ": " << value << std::endl;
+}
+
 void Mediator::changeCurrentFrame(int currentFrame)
 {
     QString currentFrameStr(std::to_string(static_cast<ll>(currentFrame)).c_str());
@@ -181,6 +193,7 @@ void Mediator::importModel()
 void Mediator::importAnimation()
 {
     QFileDialog dialog;
+    dialog.setDirectory("data/models");
     dialog.setFileMode(QFileDialog::Directory);
     dialog.setOption(QFileDialog::ShowDirsOnly);
 
@@ -210,8 +223,8 @@ void Mediator::browseInputPoints()
         {
             std::string path(std::string(files.at(0).toStdString()));
             _userInterface.eInputPointsPath->setText(QString(path.c_str()));
-            _userInterface.widgetDisplacementProperties->setEnabled(true);
             _sceneViewer->loadInputPoints(path);
+            _userInterface.widgetDisplacementProperties->setEnabled(true);
         }
     }
 }

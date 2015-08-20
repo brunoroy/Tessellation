@@ -27,6 +27,7 @@ public slots:
     void showShaders(bool value);
     void showPlayer(bool value);
     void defaultValues();
+    void resetScene();
     void saveSnapshot();
     void about();
 
@@ -41,6 +42,7 @@ public slots:
     void setDensity(int value);
     void setDistanceEpsilon(int value);
     void browseInputPoints();
+    void showInputPoints(bool value);
 
     //player
     void changeCurrentFrame(int currentFrame);

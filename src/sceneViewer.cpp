@@ -58,7 +58,7 @@ void SceneViewer::loadModel(std::string path)
 
 void SceneViewer::loadInputPoints(std::string path)
 {
-    std::shared_ptr<InputPoints> inputPoints(new InputPoints(path));
+    //std::shared_ptr<InputPoints> inputPoints(new InputPoints(path));
     //_scene->updateGrid(inputPoints.get());
 }
 
@@ -129,7 +129,7 @@ void SceneViewer::animate()
 
 void SceneViewer::draw()
 {
-    bool animation = (animationIsStarted() || _userInterface->widgetPlayer->isEnabled() || _currentFrame != 1);
+    bool animation = (animationIsStarted() || _userInterface->widgetPlayer->isVisible() || _currentFrame != 1);
     _renderer->render(_currentFrame, animation);
 }
 

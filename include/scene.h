@@ -21,10 +21,11 @@ public:
     ~Scene();
 
     void initialize(uint width, uint height);
-    void draw(const int currentFrame, const bool animation);
+    void draw(const int currentFrame, const bool animation = false);
     void updateConstraints();
     glm::mat4 updateMVP();
     bool isLoaded() {return _loaded;}
+    void setLoaded(bool loaded) {_loaded = loaded;}
     void resize(uint width, uint height);
 
     Camera* getCamera() {return _camera.get();}
@@ -45,6 +46,11 @@ public:
     void loadLight();
     void loadScene(std::string path);
     void loadAnimation(std::string path, const int frameCount, QProgressBar &progress);
+    void reset()
+    {
+        _loaded = false;
+        _meshes.clear();
+    }
 
     uint getWidth() {return _width;}
     uint getHeight() {return _height;}
@@ -54,7 +60,7 @@ public:
 
     void updateObjectShaders();
     void updateGrid(Mesh *mesh);
-    void updateGrid(InputPoints *points);
+    void updateGrid(std::vector<glm::vec3> points);
 
 private:
     std::shared_ptr<Camera> _camera;

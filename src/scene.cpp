@@ -46,7 +46,7 @@ glm::mat4 Scene::updateMVP()
 
 void Scene::draw(const int currentFrame, const bool animation)
 {
-    if (isLoaded())
+    if (isLoaded() && !_meshes.empty())
     {
         glm::mat4 mvp = updateMVP();
         if (animation)
@@ -59,6 +59,7 @@ void Scene::draw(const int currentFrame, const bool animation)
         {
             foreach (Mesh *mesh, _meshes)
             {
+                std::clog << mesh->getTriangleCount() << " triangles drawn.\n";
                 mesh->preDraw();
                 mesh->setMVP(mvp);
                 mesh->draw();
@@ -106,10 +107,10 @@ void Scene::updateGrid(Mesh *mesh)
     }
 }
 
-void Scene::updateGrid(InputPoints *points)
+void Scene::updateGrid(std::vector<glm::vec3> points)
 {
-    for (int i = 0; i < points->getPointCount(); i++)
-        _grid->insertPoint(i, points->getPoint(i));
+    for (size_t i = 0; i < points.size(); i++)
+        _grid->insertPoint(i, points.at(i));
 }
 
 void Scene::loadLight()
@@ -123,10 +124,10 @@ void Scene::loadLight()
 
 void Scene::loadScene(std::string path)
 {
-    _meshes.clear();
     loadModel(path);
     loadLight();
 
+    std::clog << "meshes: " << _meshes.size() << std::endl;
     foreach (Mesh *mesh, _meshes)
         mesh->initialize();
 

@@ -16,7 +16,8 @@ Mesh::Mesh():
     _objModel(false),
     _mvp(glm::mat4(1.0f)),
     _innerTL(1),
-    _outerTL(1)
+    _outerTL(1),
+    _isCloud(false)
 {
 }
 
@@ -25,7 +26,7 @@ Mesh::Mesh(Mesh *mesh)
     *this = mesh;
 }
 
-Mesh::Mesh(QString filename)
+Mesh::Mesh(QString filename, const bool isCloud)
 {
     std::string filetype = filename.mid(filename.length()-3, 3).toStdString();
 
@@ -34,7 +35,11 @@ Mesh::Mesh(QString filename)
         if (filetype.compare("obj") == 0)
             loadModelWavefront(filename);
         else if (filetype.compare("ply") == 0)
-            loadModelPLY(filename);
+            if (isCloud)
+                loadInputPoints(filename);
+            else
+                loadModelPLY(filename);
+
 
         _objModel = true;
     }
@@ -322,10 +327,10 @@ bool Mesh::loadModelWavefront(QString filename)
     return true;
 }
 
-void InputPoints::readInputFile(std::string path)
+void Mesh::loadInputPoints(QString filename)
 {
     std::string line;
-    std::ifstream inputFile(path);
+    std::ifstream inputFile(filename.toStdString());
     if (inputFile.is_open())
     {
         QStringList properties;
@@ -336,7 +341,7 @@ void InputPoints::readInputFile(std::string path)
             if (value.contains("element vertex"))
             {
                 QStringList values = value.split(" ");
-                _pointCount = values.at(2).toInt();
+                _vertexCount = values.at(2).toInt();
             }
             else if (value.contains("property float"))
             {
@@ -346,7 +351,7 @@ void InputPoints::readInputFile(std::string path)
             else if (value.compare("end_header") == 0)
             {
                 glm::vec3 position, normal;
-                for (int i = 0; i < _pointCount; i++)
+                for (int i = 0; i < _vertexCount; i++)
                 {
                     if (getline(inputFile, line))
                     {
@@ -371,13 +376,13 @@ void InputPoints::readInputFile(std::string path)
                             }
                         }
 
-                        _points.push_back(position);
+                        _positions.push_back(position);
                     }
                 }
             }
         }
 
-        std::cout << "Read " << _pointCount << " points." << std::endl;
+        std::cout << "Read " << _vertexCount << " points." << std::endl;
 
         inputFile.close();
     }
