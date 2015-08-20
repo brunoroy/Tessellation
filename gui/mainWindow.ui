@@ -100,6 +100,9 @@
           <property name="text">
            <string>Displacement</string>
           </property>
+          <property name="shortcut">
+           <string>Alt+D</string>
+          </property>
          </widget>
         </item>
         <item row="3" column="0">
@@ -446,7 +449,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -461,8 +464,8 @@
      <addaction name="actionImportAnimation"/>
     </widget>
     <addaction name="actionSnapshot"/>
-    <addaction name="actionQuit"/>
     <addaction name="menuImport"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -478,7 +481,14 @@
      <property name="title">
       <string>Effects</string>
      </property>
+     <widget class="QMenu" name="menuDisplacement">
+      <property name="title">
+       <string>Displacement</string>
+      </property>
+      <addaction name="actionImportInputPoints"/>
+     </widget>
      <addaction name="actionTessellation"/>
+     <addaction name="menuDisplacement"/>
     </widget>
     <addaction name="actionShaders"/>
     <addaction name="actionPlayer"/>
@@ -657,6 +667,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionImportInputPoints">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Import input points</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
    </property>
   </action>
  </widget>
