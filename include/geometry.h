@@ -1,5 +1,5 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef GEOMETRY_H
+#define GEOMETRY_H
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -111,13 +111,13 @@ private:
     size_t _pointCount;
 };*/
 
-class Mesh
+class Geometry
 {
 public:
-    Mesh();
-    Mesh(Mesh* mesh);
-    Mesh(QString filename, const bool isCloud = false);
-    ~Mesh();
+    Geometry();
+    Geometry(Geometry* geometry);
+    Geometry(QString filename, const bool isCloud = false);
+    ~Geometry();
 
     bool loadModelWavefront(QString filename);
     bool loadModelPLY(QString filename);
@@ -209,10 +209,10 @@ private:
     bool _invertNormals;
 };
 
-class Geometry
+class GeometryTools
 {
 public:
     static float getDistance(Polygon polygon, glm::vec3 point);
 };
 
-#endif // MESH_H
+#endif // GEOMETRY_H

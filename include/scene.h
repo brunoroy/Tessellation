@@ -29,12 +29,12 @@ public:
     void resize(uint width, uint height);
 
     Camera* getCamera() {return _camera.get();}
-    void addMesh(Mesh* mesh)
+    void addGeometry(Geometry* geometry)
     {
-        _meshes.push_back(mesh);
+        _geometries.push_back(geometry);
     }
-    std::vector<Mesh*> getMeshes() {return _meshes;}
-    Mesh* getMesh(uint index) {return _meshes.at(index);}
+    std::vector<Geometry*> getGeometries() {return _geometries;}
+    Geometry* getGeometry(uint index) {return _geometries.at(index);}
 
     void moveForward();
     void moveBackward();
@@ -49,7 +49,7 @@ public:
     void reset()
     {
         _loaded = false;
-        _meshes.clear();
+        _geometries.clear();
     }
 
     uint getWidth() {return _width;}
@@ -59,12 +59,12 @@ public:
     Light* getLight() {return _light.get();}
 
     void updateObjectShaders();
-    void updateGrid(Mesh *mesh);
+    void updateGrid(Geometry *geometry);
     void updateGrid(std::vector<glm::vec3> points);
 
 private:
     std::shared_ptr<Camera> _camera;
-    std::vector<Mesh*> _meshes;
+    std::vector<Geometry*> _geometries;
     std::shared_ptr<Light> _light;
     std::shared_ptr<SpatialGrid> _grid;
 

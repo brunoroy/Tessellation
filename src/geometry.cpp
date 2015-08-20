@@ -9,7 +9,7 @@
 #include <fstream>
 #include <glm/glm.hpp>
 
-Mesh::Mesh():
+Geometry::Geometry():
     _translation(1.0f),
     _rotation(1.0f),
     _scaling(1.0f),
@@ -21,12 +21,12 @@ Mesh::Mesh():
 {
 }
 
-Mesh::Mesh(Mesh *mesh)
+Geometry::Geometry(Geometry *geometry)
 {
-    *this = mesh;
+    *this = geometry;
 }
 
-Mesh::Mesh(QString filename, const bool isCloud)
+Geometry::Geometry(QString filename, const bool isCloud)
 {
     std::string filetype = filename.mid(filename.length()-3, 3).toStdString();
 
@@ -45,13 +45,13 @@ Mesh::Mesh(QString filename, const bool isCloud)
     }
 }
 
-Mesh::~Mesh()
+Geometry::~Geometry()
 {
     glDeleteBuffers(1, &_vertexBuffer);
     glDeleteBuffers(1, &_indiceBuffer);
 }
 
-void Mesh::initialize()
+void Geometry::initialize()
 {
     //indices
     glGenBuffers(1, &_indiceBuffer);
@@ -90,21 +90,21 @@ void Mesh::initialize()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Mesh::preDraw()
+void Geometry::preDraw()
 {
     _material->bind();
     Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
     Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);
 }
 
-void Mesh::setMVP(glm::mat4 matrix)
+void Geometry::setMVP(glm::mat4 matrix)
 {
     _mvp =  matrix * getModelMatrix();
     Shader *shader = _material->getShader();
     shader->transmitUniform("mvp", _mvp);
 }
 
-void Mesh::draw()
+void Geometry::draw()
 {
     Shader *shader = Shaders::getShader("render");
     bool doTessellation = shader->doTessellation();
@@ -139,7 +139,7 @@ void Mesh::draw()
     glDisableVertexAttribArray(0);
 }
 
-bool Mesh::loadModelPLY(QString filename)
+bool Geometry::loadModelPLY(QString filename)
 {
     std::string line;
     std::ifstream modelFile(filename.toStdString());
@@ -238,7 +238,7 @@ bool Mesh::loadModelPLY(QString filename)
 }
 
 //from Nori educational ray tracer
-bool Mesh::loadModelWavefront(QString filename)
+bool Geometry::loadModelWavefront(QString filename)
 {
     typedef boost::unordered_map<OBJVertex, uint32_t, OBJVertexHash> VertexMap;
 
@@ -327,7 +327,7 @@ bool Mesh::loadModelWavefront(QString filename)
     return true;
 }
 
-void Mesh::loadInputPoints(QString filename)
+void Geometry::loadInputPoints(QString filename)
 {
     std::string line;
     std::ifstream inputFile(filename.toStdString());
@@ -388,7 +388,7 @@ void Mesh::loadInputPoints(QString filename)
     }
 }
 
-float Geometry::getDistance(Polygon polygon, glm::vec3 point)
+float GeometryTools::getDistance(Polygon polygon, glm::vec3 point)
 {
     glm::vec3 p0 = polygon.positions[0];
     glm::vec3 v1 = polygon.positions[1] - p0;

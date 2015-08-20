@@ -46,23 +46,23 @@ glm::mat4 Scene::updateMVP()
 
 void Scene::draw(const int currentFrame, const bool animation)
 {
-    if (isLoaded() && !_meshes.empty())
+    if (isLoaded() && !_geometries.empty())
     {
         glm::mat4 mvp = updateMVP();
         if (animation)
         {
-            _meshes.at(currentFrame-1)->preDraw();
-            _meshes.at(currentFrame-1)->setMVP(mvp);
-            _meshes.at(currentFrame-1)->draw();
+            _geometries.at(currentFrame-1)->preDraw();
+            _geometries.at(currentFrame-1)->setMVP(mvp);
+            _geometries.at(currentFrame-1)->draw();
         }
         else
         {
-            foreach (Mesh *mesh, _meshes)
+            foreach (Geometry *geometry, _geometries)
             {
-                std::clog << mesh->getTriangleCount() << " triangles drawn.\n";
-                mesh->preDraw();
-                mesh->setMVP(mvp);
-                mesh->draw();
+                //std::clog << geometry->getTriangleCount() << " triangles drawn.\n";
+                geometry->preDraw();
+                geometry->setMVP(mvp);
+                geometry->draw();
             }
         }
         _light->setMVP(mvp);
@@ -79,28 +79,28 @@ void Scene::loadModel(std::string path)
     Texture::resetUnit();
     Texture* basicTexture = Texture::newFromNextUnit();
 
-    Mesh* mesh = new Mesh(QString(path.c_str()));
+    Geometry* geometry = new Geometry(QString(path.c_str()));
     basicTexture->load("data/textures/white.jpg");
     basicTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
     basicTexture->initialize();
 
-    ((MaterialDefault*)(mesh->getMaterial()))->setTexture(basicTexture);
-    mesh->scale(glm::vec3(10.0f, 10.0f, 10.0f));
-    addMesh(mesh);
+    ((MaterialDefault*)(geometry->getMaterial()))->setTexture(basicTexture);
+    geometry->scale(glm::vec3(10.0f, 10.0f, 10.0f));
+    addGeometry(geometry);
     //updateGrid(mesh);
 }
 
-void Scene::updateGrid(Mesh *mesh)
+void Scene::updateGrid(Geometry *geometry)
 {
-    for (int i = 0; i < mesh->getTriangleCount(); i++)
+    for (int i = 0; i < geometry->getTriangleCount(); i++)
     {
         //std::clog << "processing polygon " << i << "." << std::endl;
         glm::vec3 vertices[3];
         for (int v = 0; v < 3; v++)
         {
-            uint vertexIndex = mesh->getIndices().at(i*3+v);
+            uint vertexIndex = geometry->getIndices().at(i*3+v);
             //std::clog << "index: " << vertexIndex << std::endl;
-            vertices[v] = mesh->getPositions().at(vertexIndex);
+            vertices[v] = geometry->getPositions().at(vertexIndex);
             //std::clog << "v[" << v << "]: { " << vertices[v].x << "," << vertices[v].y << "," << vertices[v].z << "}" << std::endl;
         }
         _grid->insertPolygon(i, vertices);
@@ -127,16 +127,16 @@ void Scene::loadScene(std::string path)
     loadModel(path);
     loadLight();
 
-    std::clog << "meshes: " << _meshes.size() << std::endl;
-    foreach (Mesh *mesh, _meshes)
-        mesh->initialize();
+    std::clog << "meshes: " << _geometries.size() << std::endl;
+    foreach (Geometry *geometry, _geometries)
+        geometry->initialize();
 
     _loaded = true;
 }
 
 void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &progress)
 {
-    _meshes.clear();
+    _geometries.clear();
     progress.setValue(0);
     progress.setMaximum(frameCount);
     for (size_t i = 0; i < frameCount; i++)
@@ -147,16 +147,16 @@ void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &
     }
     loadLight();
 
-    foreach (Mesh *mesh, _meshes)
-        mesh->initialize();
+    foreach (Geometry *geometry, _geometries)
+        geometry->initialize();
 
     _loaded = true;
 }
 
 void Scene::updateObjectShaders()
 {
-    foreach (Mesh *mesh, _meshes)
-        mesh->getMaterial()->setShader("render");
+    foreach (Geometry *geometry, _geometries)
+        geometry->getMaterial()->setShader("render");
 }
 
 void Scene::setLight(Light *light)
