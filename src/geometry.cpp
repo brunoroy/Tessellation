@@ -134,9 +134,9 @@ void Geometry::draw()
     else //mesh
     {
         if (doTessellation)
-            glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, 0);
+            glDrawArrays(GL_PATCHES, 0, _indices.size());
         else
-            glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+            glDrawArrays(GL_TRIANGLES, 0, _indices.size());
     }
 
     glDisableVertexAttribArray(2);
