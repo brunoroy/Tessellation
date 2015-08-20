@@ -13,7 +13,7 @@ Renderer::Renderer():
     _initialized(false),
     _doTessellation(false)
 {
-    loadShaders(_doTessellation);
+    loadShaders();
 }
 
 Renderer::~Renderer()
@@ -36,12 +36,16 @@ void Renderer::resize(int width, int height)
     _height = height;
 }
 
-void Renderer::loadShaders(bool doTessellation)
+void Renderer::loadShaders()
 {
-    Shaders::clear();
+    std::clog << "loading shaders...\n";
+    //Shaders::clear();
+    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
+                       QStringList() << "mvp" << "doTessellation", false);
+    //if (doTessellation)
     Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
                        QStringList() << "mvp" << "doTessellation" << "innerTL" << "outerTL",
-                       doTessellation);
+                       true);
 }
 
 void Renderer::render(const int currentFrame, const bool animation)

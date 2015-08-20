@@ -10,7 +10,7 @@ public:
     Renderer();
     ~Renderer();
 
-    void loadShaders(bool doTessellation = false);
+    void loadShaders();
     void initialize(Scene *scene);
     void resize(int width, int height);
     bool isInitialized() {return _initialized;}

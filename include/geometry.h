@@ -116,7 +116,7 @@ class Geometry
 public:
     Geometry();
     Geometry(Geometry* geometry);
-    Geometry(QString filename, const bool isCloud = false);
+    Geometry(QString filename, const uint id = 0, const bool isTessellable = true);
     ~Geometry();
 
     bool loadModelWavefront(QString filename);
@@ -151,12 +151,13 @@ public:
 
     bool isQuads() {return _indices.size()%3 == 0;}
     bool isTriangles() {return _indices.size()%4 == 0;}
-    bool isCloud() {return _isCloud;}
+    bool isTessellable() {return _isTessellable;}
 
     void setInnerTL(int value) {_innerTL = value;}
     void setOuterTL(int value) {_outerTL = value;}
 
     uint getTriangleCount() {return _triangleCount;}
+    uint getId() {return _id;}
 
 protected:
     std::vector<uint> _indices;
@@ -181,7 +182,8 @@ protected:
 
 private:
     bool _hasNormals;
-    bool _isCloud;
+    bool _isTessellable;
+    uint _id;
 
     uint _locationVertices;
     uint _locationTextureCoordinates;

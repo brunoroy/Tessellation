@@ -151,17 +151,6 @@ uint Shader::getUniform(QString name)
     return _uniforms.value(name);
 }
 
-void Shader::transmitUniform(QString name, const Texture *tex)
-{
-    std::clog << __FUNCTION__ << ": " << name.toStdString().c_str() << std::endl;
-    glUniform1i(_uniforms.value(name, -1), tex->_index);
-}
-
-void Shader::transmitUniform(QString name, const TextureCubeMap *tex)
-{
-    glUniform1i(_uniforms.value(name, -1), tex->_index);
-}
-
 void Shader::transmitUniform(QString name, int i)
 {
     glUniform1i(_uniforms.value(name, -1), i);
@@ -215,5 +204,9 @@ void Shaders::addShader(QString value, QStringList attributes, QStringList unifo
     QString path = QString("shaders/").append(value);
     Shader *shader = new Shader(value, path, doTessellation);
     shader->load(attributes, uniforms);
-    _shaders.insert(value, shader);
+    if (doTessellation)
+        _shaders.insert(value.append("TL"), shader);
+    else
+        _shaders.insert(value, shader);
+    std::clog << "shader " << value.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
 }

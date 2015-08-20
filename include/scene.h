@@ -42,9 +42,9 @@ public:
     void strafeRight();
 
     glm::mat4 getCurrentMVP();
-    void loadModel(std::string path, const bool isCloud = false);
+    void loadModel(std::string path, const bool isTessellable = true);
     void loadLight();
-    void loadScene(std::string path, const bool isCloud = false);
+    void loadScene(std::string path, const bool isTessellable = true);
     void loadAnimation(std::string path, const int frameCount, QProgressBar &progress);
     void reset()
     {
@@ -58,7 +58,7 @@ public:
     void setLight(Light *light);
     Light* getLight() {return _light.get();}
 
-    void updateObjectShaders();
+    void updateObjectShaders(const bool doTessellation);
     void updateGrid(Geometry *geometry);
     void updateGrid(std::vector<glm::vec3> points);
 

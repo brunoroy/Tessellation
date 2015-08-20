@@ -16,7 +16,8 @@ Geometry::Geometry():
     _mvp(glm::mat4(1.0f)),
     _innerTL(1),
     _outerTL(1),
-    _isCloud(false)
+    _isTessellable(false),
+    _id(0)
 {
 }
 
@@ -25,7 +26,7 @@ Geometry::Geometry(Geometry *geometry)
     *this = geometry;
 }
 
-Geometry::Geometry(QString filename, const bool isCloud)
+Geometry::Geometry(QString filename, const uint id, const bool isTessellable)
 {
     std::string filetype = filename.mid(filename.length()-3, 3).toStdString();
 
@@ -34,12 +35,14 @@ Geometry::Geometry(QString filename, const bool isCloud)
         if (filetype.compare("obj") == 0)
             loadModelWavefront(filename);
         else if (filetype.compare("ply") == 0)
-            if (isCloud)
-                loadInputPoints(filename);
-            else
+            if (isTessellable)
                 loadModelPLY(filename);
+            else
+                loadInputPoints(filename);
     }
-    _isCloud = isCloud;
+
+    _id = id;
+    _isTessellable = isTessellable;
 }
 
 Geometry::~Geometry()
@@ -89,23 +92,37 @@ void Geometry::initialize()
 
 void Geometry::preDraw()
 {
+    std::clog << "predraw...\n";
     _material->bind();
-    /*Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
-    Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);*/
+    if (_isTessellable)
+    {
+        _material->getShader()->transmitUniform("innerTL", _innerTL);
+        _material->getShader()->transmitUniform("outerTL", _outerTL);
+    }
+    //Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
+    //Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);
 }
 
 void Geometry::setMVP(glm::mat4 matrix)
 {
+    std::clog << "mvp...\n";
     _mvp =  matrix * getModelMatrix();
-    /*Shader *shader = _material->getShader();
-    shader->transmitUniform("mvp", _mvp);*/
+    _material->getShader()->transmitUniform("mvp", _mvp);
+    //Shader *shader = _material->getShader();
+    //std::clog << "transmitting mvp (id=" << _id << ")..." << std::endl;
+    //shader->transmitUniform("mvp", _mvp);
 }
 
 void Geometry::draw()
 {
+    std::clog << "draw...\n";
     //Shader *shader = Shaders::getShader("render");
-    bool doTessellation = false;//shader->doTessellation();
-    //shader->transmitUniform("doTessellation", doTessellation);
+    bool doTessellation = false;
+    if (_isTessellable)
+    {
+        _material->getShader()->doTessellation();
+        _material->getShader()->transmitUniform("doTessellation", doTessellation);
+    }
 
     glEnableVertexAttribArray(_locationVertices);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
@@ -126,18 +143,18 @@ void Geometry::draw()
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indiceBuffer);
-    if (_isCloud)
-    {
-        glPointSize(2.0f);
-        glDrawArrays(GL_POINTS, 0, _indices.size());
-        glPointSize(1.0f);
-    }
-    else //mesh
+    if (_isTessellable) //mesh
     {
         if (doTessellation)
             glDrawArrays(GL_PATCHES, 0, _indices.size());
         else
             glDrawArrays(GL_TRIANGLES, 0, _indices.size());
+    }
+    else //point cloud
+    {
+        glPointSize(2.0f);
+        glDrawArrays(GL_POINTS, 0, _indices.size());
+        glPointSize(1.0f);
     }
 
     glDisableVertexAttribArray(2);

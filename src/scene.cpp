@@ -62,6 +62,7 @@ void Scene::draw(const int currentFrame, const bool animation)
         {
             foreach (Geometry *geometry, _geometries)
             {
+                std::clog << "geometry[" << geometry->getId() << "]: " << "shaders(" << geometry->getMaterial()->getShader()->getShaderCount() << ")\n";
                 geometry->preDraw();
                 geometry->setMVP(mvp);
                 geometry->draw();
@@ -76,17 +77,10 @@ void Scene::resize(uint width, uint height)
     _camera->setAspectRatio(width/height);
 }
 
-void Scene::loadModel(std::string path, const bool isCloud)
+void Scene::loadModel(std::string path, const bool isTessellable)
 {
-    Texture::resetUnit();
-    Texture* basicTexture = Texture::newFromNextUnit();
-
-    Geometry* geometry = new Geometry(QString(path.c_str()), isCloud);
-    basicTexture->load("data/textures/white.jpg");
-    basicTexture->setFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-    basicTexture->initialize();
-
-    ((MaterialDefault*)(geometry->getMaterial()))->setTexture(basicTexture);
+    uint geometryId = _geometries.size() + 1;
+    Geometry* geometry = new Geometry(QString(path.c_str()), geometryId, isTessellable);
     geometry->scale(glm::vec3(10.0f, 10.0f, 10.0f));
     addGeometry(geometry);
     //updateGrid(mesh);
@@ -124,9 +118,9 @@ void Scene::loadLight()
     setLight(sun);
 }
 
-void Scene::loadScene(std::string path, const bool isCloud)
+void Scene::loadScene(std::string path, const bool isTessellable)
 {
-    loadModel(path, isCloud);
+    loadModel(path, isTessellable);
     loadLight();
 
     foreach (Geometry *geometry, _geometries)
@@ -154,11 +148,21 @@ void Scene::loadAnimation(std::string path, const int frameCount, QProgressBar &
     _loaded = true;
 }
 
-void Scene::updateObjectShaders()
+void Scene::updateObjectShaders(const bool doTessellation)
 {
     foreach (Geometry *geometry, _geometries)
-        if (!geometry->isCloud())
+        if (geometry->isTessellable() && doTessellation)
+        {
+            std::clog << "geometry[" << geometry->getId() << "]: " << "tessellable(" << geometry->isTessellable() << ")\n";
+            geometry->getMaterial()->setShader("renderTL");
+            std::clog << "done.\n";
+        }
+        else
+        {
+            std::clog << "geometry[" << geometry->getId() << "]: " << "tessellable(" << geometry->isTessellable() << ")\n";
             geometry->getMaterial()->setShader("render");
+            std::clog << "done.\n";
+        }
 }
 
 void Scene::setLight(Light *light)

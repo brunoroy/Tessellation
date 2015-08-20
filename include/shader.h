@@ -2,11 +2,13 @@
 #define SHADER_H
 
 #include <GL/glew.h>
-#include <string>
-#include <glm/glm.hpp>
 #include <QHash>
 #include <QStringList>
-#include "texture.h"
+
+#include <string>
+#include <vector>
+
+#include <glm/glm.hpp>
 
 class Shader
 {
@@ -22,8 +24,6 @@ public:
     GLuint getProgramId() {return _programId;}
     uint getAttribute(QString name);
     uint getUniform(QString name);
-    void transmitUniform(QString name, const Texture* tex);
-    void transmitUniform(QString name, const TextureCubeMap* tex);
     void transmitUniform(QString name, int i);
     void transmitUniform(QString name, float f);
     void transmitUniform(QString name, float f1, float f2);
@@ -37,6 +37,7 @@ public:
     void disable();
 
     bool doTessellation() {return _doTessellation;}
+    size_t getShaderCount() {return _shaderIds.size();}
 
 private:
     QString _value;
@@ -59,6 +60,7 @@ public:
     static void clear() {_shaders.clear();}
     static Shader* getShader(QString value);
     static void addShader(QString value, QStringList attributes, QStringList uniforms, bool doTessellation = false);
+    static size_t getCount() {return _shaders.size();}
 
 private:
     static QHash<QString, Shader*> _shaders;

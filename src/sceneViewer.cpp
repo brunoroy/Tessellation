@@ -57,8 +57,8 @@ void SceneViewer::loadModel(std::string path)
 }
 
 void SceneViewer::loadInputPoints(std::string path)
-{
-    _scene->loadScene(path, true);
+{    
+    _scene->loadScene(path, false);
     //_scene->loadScene(path);
     //std::shared_ptr<InputPoints> inputPoints(new InputPoints(path));
     //_scene->updateGrid(inputPoints.get());
@@ -66,15 +66,11 @@ void SceneViewer::loadInputPoints(std::string path)
 
 void SceneViewer::toggleTessellation(bool value)
 {
-    std::clog << "loading tessellation...\n";
     _isTessellated = value;
     if (value)
         initializeTS();
-    std::clog << "loading shaders...\n";
-    _renderer->loadShaders(value);
-    std::clog << "updating objects...\n";
-    _scene->updateObjectShaders();
-    std::clog << "rendering...\n";
+    //_renderer->loadShaders(value);
+    _scene->updateObjectShaders(value);
     update();
 }
 
