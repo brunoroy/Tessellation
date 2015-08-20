@@ -90,22 +90,22 @@ void Geometry::initialize()
 void Geometry::preDraw()
 {
     _material->bind();
-    Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
-    Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);
+    /*Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
+    Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);*/
 }
 
 void Geometry::setMVP(glm::mat4 matrix)
 {
     _mvp =  matrix * getModelMatrix();
-    Shader *shader = _material->getShader();
-    shader->transmitUniform("mvp", _mvp);
+    /*Shader *shader = _material->getShader();
+    shader->transmitUniform("mvp", _mvp);*/
 }
 
 void Geometry::draw()
 {
-    Shader *shader = Shaders::getShader("render");
-    bool doTessellation = shader->doTessellation();
-    shader->transmitUniform("doTessellation", doTessellation);
+    //Shader *shader = Shaders::getShader("render");
+    bool doTessellation = false;//shader->doTessellation();
+    //shader->transmitUniform("doTessellation", doTessellation);
 
     glEnableVertexAttribArray(_locationVertices);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);

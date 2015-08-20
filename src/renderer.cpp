@@ -40,7 +40,7 @@ void Renderer::loadShaders(bool doTessellation)
 {
     Shaders::clear();
     Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
-                       QStringList() << "mvp" << "doTessellation" << "textureDiffuse" << "innerTL" << "outerTL",
+                       QStringList() << "mvp" << "doTessellation" << "innerTL" << "outerTL",
                        doTessellation);
 }
 

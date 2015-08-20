@@ -153,6 +153,7 @@ uint Shader::getUniform(QString name)
 
 void Shader::transmitUniform(QString name, const Texture *tex)
 {
+    std::clog << __FUNCTION__ << ": " << name.toStdString().c_str() << std::endl;
     glUniform1i(_uniforms.value(name, -1), tex->_index);
 }
 

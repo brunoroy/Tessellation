@@ -48,7 +48,7 @@ public:
     void configShader()
     {
         _shader->bind();
-        _shader->transmitUniform("textureDiffuse", _diffuse);
+        //_shader->transmitUniform("textureDiffuse", _diffuse);
     }
 
     void configTexture()
