@@ -35,6 +35,7 @@ public:
 
     void enable();
     void disable();
+    QString getValue() {return _value;}
 
     bool doTessellation() {return _doTessellation;}
     size_t getShaderCount() {return _shaderIds.size();}

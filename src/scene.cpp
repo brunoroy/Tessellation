@@ -62,7 +62,7 @@ void Scene::draw(const int currentFrame, const bool animation)
         {
             foreach (Geometry *geometry, _geometries)
             {
-                std::clog << "geometry[" << geometry->getId() << "]: " << "shaders(" << geometry->getMaterial()->getShader()->getShaderCount() << ")\n";
+                std::clog << "geometry[" << geometry->getId() << "]: Shader[" << geometry->getShader()->getValue().toStdString().c_str() << "]" << std::endl;
                 geometry->preDraw();
                 geometry->setMVP(mvp);
                 geometry->draw();
@@ -152,17 +152,9 @@ void Scene::updateObjectShaders(const bool doTessellation)
 {
     foreach (Geometry *geometry, _geometries)
         if (geometry->isTessellable() && doTessellation)
-        {
-            std::clog << "geometry[" << geometry->getId() << "]: " << "tessellable(" << geometry->isTessellable() << ")\n";
             geometry->getMaterial()->setShader("renderTL");
-            std::clog << "done.\n";
-        }
         else
-        {
-            std::clog << "geometry[" << geometry->getId() << "]: " << "tessellable(" << geometry->isTessellable() << ")\n";
             geometry->getMaterial()->setShader("render");
-            std::clog << "done.\n";
-        }
 }
 
 void Scene::setLight(Light *light)

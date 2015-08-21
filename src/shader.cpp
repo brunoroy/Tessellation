@@ -10,6 +10,7 @@
 
 Shader::Shader(QString value, QString filename, bool doTessellation)
 {
+    std::clog << "value: " << value.toStdString().c_str() << std::endl;
     _value = value;
     _doTessellation = doTessellation;
 
@@ -202,11 +203,11 @@ Shader* Shaders::getShader(QString value)
 void Shaders::addShader(QString value, QStringList attributes, QStringList uniforms, bool doTessellation)
 {
     QString path = QString("shaders/").append(value);
-    Shader *shader = new Shader(value, path, doTessellation);
-    shader->load(attributes, uniforms);
+    QString shaderName(value);
     if (doTessellation)
-        _shaders.insert(value.append("TL"), shader);
-    else
-        _shaders.insert(value, shader);
-    std::clog << "shader " << value.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
+        shaderName.append("TL");
+    Shader *shader = new Shader(shaderName, path, doTessellation);
+    shader->load(attributes, uniforms);
+    _shaders.insert(shaderName, shader);
+    std::clog << "shader " << shaderName.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
 }

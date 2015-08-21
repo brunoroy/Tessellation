@@ -92,35 +92,26 @@ void Geometry::initialize()
 
 void Geometry::preDraw()
 {
-    std::clog << "predraw...\n";
     _material->bind();
     if (_isTessellable)
     {
         _material->getShader()->transmitUniform("innerTL", _innerTL);
         _material->getShader()->transmitUniform("outerTL", _outerTL);
     }
-    //Shaders::getShader("render")->transmitUniform("innerTL", _innerTL);
-    //Shaders::getShader("render")->transmitUniform("outerTL", _outerTL);
 }
 
 void Geometry::setMVP(glm::mat4 matrix)
 {
-    std::clog << "mvp...\n";
     _mvp =  matrix * getModelMatrix();
     _material->getShader()->transmitUniform("mvp", _mvp);
-    //Shader *shader = _material->getShader();
-    //std::clog << "transmitting mvp (id=" << _id << ")..." << std::endl;
-    //shader->transmitUniform("mvp", _mvp);
 }
 
 void Geometry::draw()
 {
-    std::clog << "draw...\n";
-    //Shader *shader = Shaders::getShader("render");
     bool doTessellation = false;
     if (_isTessellable)
     {
-        _material->getShader()->doTessellation();
+        doTessellation = _material->getShader()->doTessellation();
         _material->getShader()->transmitUniform("doTessellation", doTessellation);
     }
 

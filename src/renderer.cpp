@@ -38,11 +38,8 @@ void Renderer::resize(int width, int height)
 
 void Renderer::loadShaders()
 {
-    std::clog << "loading shaders...\n";
-    //Shaders::clear();
     Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
                        QStringList() << "mvp" << "doTessellation", false);
-    //if (doTessellation)
     Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
                        QStringList() << "mvp" << "doTessellation" << "innerTL" << "outerTL",
                        true);

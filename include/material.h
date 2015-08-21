@@ -2,36 +2,27 @@
 #define MATERIAL_H
 
 #include "shader.h"
-#include <memory>
-//#include <mutex>
 #include <iostream>
+#include <cassert>
 
 class Material
 {
 public:
-    Material(QString value) {_shader.reset(Shaders::getShader(value));}
+    Material(QString value) {_shader = Shaders::getShader(value);}//_shader.reset(Shaders::getShader(value));}
     ~Material() {}
 
     void initialize();
     void setShader(QString value)
     {
-        std::clog << "shaders: " << Shaders::getCount() << std::endl;
-        std::clog << "shader: " << value.toStdString().c_str() << std::endl;
-        Shader *shader = Shaders::getShader(value);
-        if (shader)
-            std::clog << "shader's found.\n";
-        else
-            std::clog << "shader's not found.\n";
-        //_mutex.lock();
-        _shader.reset(Shaders::getShader(value));
-        //_mutex.unlock();
+        //std::clog << "changing shader from " << _shader->getValue().toStdString().c_str() << " to " << value.toStdString().c_str() << std::endl;
+        _shader = Shaders::getShader(value);
     }
-    Shader* getShader() {return _shader.get();}
+    bool equals(QString value) {return _shader->getValue() == value;}
+    Shader* getShader() {return _shader;}
     virtual void bind() {}
 
 protected:
-    std::shared_ptr<Shader> _shader;
-    //mutable std::mutex _mutex;
+    Shader* _shader;
 
 private:
     virtual void configShader() {}

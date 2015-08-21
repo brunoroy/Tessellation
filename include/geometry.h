@@ -11,207 +11,212 @@
 #include "glm/ext.hpp"
 #include "material.h"
 
-struct OBJVertex {
-    uint32_t p, n, uv;
+namespace Tessellation
+{
 
-    inline OBJVertex() { }
+    struct OBJVertex {
+        uint32_t p, n, uv;
 
-    OBJVertex(const QString &string)
-        : n((uint32_t) -1), uv((uint32_t) -1) {
-        QStringList tokens = string.split("/");
+        inline OBJVertex() { }
 
-        bool ok;
-        p  = (uint) tokens[0].toInt(&ok) - 1;
+        OBJVertex(const QString &string)
+            : n((uint32_t) -1), uv((uint32_t) -1) {
+            QStringList tokens = string.split("/");
 
-        if (tokens.size() == 3) {
-            if (tokens[1].length() > 0) {
-                uv = (uint32_t) tokens[1].toInt(&ok) - 1;
+            bool ok;
+            p  = (uint) tokens[0].toInt(&ok) - 1;
+
+            if (tokens.size() == 3) {
+                if (tokens[1].length() > 0) {
+                    uv = (uint32_t) tokens[1].toInt(&ok) - 1;
+                }
+                if (tokens[2].length() > 0) {
+                    n  = (uint32_t) tokens[2].toInt(&ok) - 1;
+                }
             }
-            if (tokens[2].length() > 0) {
-                n  = (uint32_t) tokens[2].toInt(&ok) - 1;
-            }
+
+            return;
         }
 
-        return;
-    }
+        inline bool operator==(const OBJVertex &v) const {
+            return v.p == p && v.n == n && v.uv == uv;
+        }
+    };
 
-    inline bool operator==(const OBJVertex &v) const {
-        return v.p == p && v.n == n && v.uv == uv;
-    }
-};
+    struct OBJVertexHash : std::unary_function<OBJVertex, size_t> {
+        std::size_t operator()(const OBJVertex &v) const {
+            size_t hash = 0;
+            boost::hash_combine(hash, v.p);
+            boost::hash_combine(hash, v.n);
+            boost::hash_combine(hash, v.uv);
+            return hash;
+        }
+    };
 
-struct OBJVertexHash : std::unary_function<OBJVertex, size_t> {
-    std::size_t operator()(const OBJVertex &v) const {
-        size_t hash = 0;
-        boost::hash_combine(hash, v.p);
-        boost::hash_combine(hash, v.n);
-        boost::hash_combine(hash, v.uv);
-        return hash;
-    }
-};
-
-struct Vertex
-{
-public:
-    Vertex(glm::vec3 position, glm::vec2 textureCoordinate, glm::vec3 normal):
-        _position(position), _textureCoordinate(textureCoordinate), _normal(normal) {}
-
-    glm::vec3 getPosition() {return _position;}
-    glm::vec3 getNormal() {return _normal;}
-    glm::vec2 getTextureCoordinate() {return _textureCoordinate;}
-
-private:
-    glm::vec3 _position;
-    glm::vec2 _textureCoordinate;
-    glm::vec3 _normal;
-};
-
-struct IndicePolygon
-{
-    IndicePolygon(uint vertex, uint uv, uint normal):
-        vertex(vertex), uv(uv), normal(normal) {}
-
-    uint vertex;
-    uint uv;
-    uint normal;
-};
-
-struct Polygons
-{
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec2> textureCoordinates;
-    std::vector<glm::vec3> normals;
-
-    size_t getSize() {return positions.size();}
-};
-
-struct Polygon
-{
-    glm::vec3 positions[3];
-    glm::vec2 textureCoordinates[3];
-    glm::vec3 normals[3];
-};
-
-/*class InputPoints
-{
-public:
-    InputPoints(std::string path)
+    struct Vertex
     {
-        readInputFile(path);
-    }
-    ~InputPoints() {}
+    public:
+        Vertex(glm::vec3 position, glm::vec2 textureCoordinate, glm::vec3 normal):
+            _position(position), _textureCoordinate(textureCoordinate), _normal(normal) {}
 
-    //void readInputFile(std::string path);
-    std::vector<glm::vec3> getPoints() {return _points;}
-    size_t getPointCount() {return _pointCount;}
-    glm::vec3 getPoint(const int index) {return _points.at(index);}
+        glm::vec3 getPosition() {return _position;}
+        glm::vec3 getNormal() {return _normal;}
+        glm::vec2 getTextureCoordinate() {return _textureCoordinate;}
 
-private:
-    std::vector<glm::vec3> _points;
-    size_t _pointCount;
-};*/
+    private:
+        glm::vec3 _position;
+        glm::vec2 _textureCoordinate;
+        glm::vec3 _normal;
+    };
 
-class Geometry
-{
-public:
-    Geometry();
-    Geometry(Geometry* geometry);
-    Geometry(QString filename, const uint id = 0, const bool isTessellable = true);
-    ~Geometry();
-
-    bool loadModelWavefront(QString filename);
-    bool loadModelPLY(QString filename);
-    bool loadInputPoints(QString filename);
-    void addVertex(Vertex vertex)
+    struct IndicePolygon
     {
-        _positions.push_back(vertex.getPosition());
-        _normals.push_back(vertex.getNormal());
-        _textureCoordinates.push_back(vertex.getTextureCoordinate());
-        _vertices.push_back(vertex);
-    }
+        IndicePolygon(uint vertex, uint uv, uint normal):
+            vertex(vertex), uv(uv), normal(normal) {}
 
-    std::vector<Vertex> getVertices() {return _vertices;}
-    std::vector<uint> getIndices() {return _indices;}
-    std::vector<glm::vec3> getPositions() {return _positions;}
-    std::vector<glm::vec3> getNormals() {return _normals;}
-    std::vector<glm::vec2> getTextureCoordinates() {return _textureCoordinates;}
-    void setMVP(glm::mat4 matrix);
+        uint vertex;
+        uint uv;
+        uint normal;
+    };
 
-    void translate(glm::vec3 vector){_translation = glm::translate(_translation, vector);}
-    void rotate(float angle, glm::vec3 vector) {_rotation = glm::rotate(_rotation, angle, vector);}
-    void scale(glm::vec3 vector) {_scaling = glm::scale(_scaling, vector);}
-    glm::mat4 getModelMatrix() {return _translation * _rotation * _scaling;}
+    struct Polygons
+    {
+        std::vector<glm::vec3> positions;
+        std::vector<glm::vec2> textureCoordinates;
+        std::vector<glm::vec3> normals;
 
-    void initialize();
-    void preDraw();
-    void draw();
+        size_t getSize() {return positions.size();}
+    };
 
-    Shader* getShader() {return _material->getShader();}
-    Material* getMaterial() {return _material;}
+    struct Polygon
+    {
+        glm::vec3 positions[3];
+        glm::vec2 textureCoordinates[3];
+        glm::vec3 normals[3];
+    };
 
-    bool isQuads() {return _indices.size()%3 == 0;}
-    bool isTriangles() {return _indices.size()%4 == 0;}
-    bool isTessellable() {return _isTessellable;}
+    /*class InputPoints
+    {
+    public:
+        InputPoints(std::string path)
+        {
+            readInputFile(path);
+        }
+        ~InputPoints() {}
 
-    void setInnerTL(int value) {_innerTL = value;}
-    void setOuterTL(int value) {_outerTL = value;}
+        //void readInputFile(std::string path);
+        std::vector<glm::vec3> getPoints() {return _points;}
+        size_t getPointCount() {return _pointCount;}
+        glm::vec3 getPoint(const int index) {return _points.at(index);}
 
-    uint getTriangleCount() {return _triangleCount;}
-    uint getId() {return _id;}
+    private:
+        std::vector<glm::vec3> _points;
+        size_t _pointCount;
+    };*/
 
-protected:
-    std::vector<uint> _indices;
-    std::vector<IndicePolygon> _indicePolygons;
-    std::vector<glm::vec3> _positions;
-    //std::vector<glm::vec4> _colors;
-    std::vector<glm::vec3> _normals;
-    std::vector<glm::vec2> _textureCoordinates;
+    class Geometry
+    {
+    public:
+        Geometry();
+        Geometry(Geometry* geometry);
+        Geometry(QString filename, const uint id = 0, const bool isTessellable = true);
+        ~Geometry();
 
-    uint *_indiceArray;
-    float *_positionArray;
-    float *_textureArray;
-    float *_normalArray;
+        bool loadModelWavefront(QString filename);
+        bool loadModelPLY(QString filename);
+        bool loadInputPoints(QString filename);
+        void addVertex(Vertex vertex)
+        {
+            _positions.push_back(vertex.getPosition());
+            _normals.push_back(vertex.getNormal());
+            _textureCoordinates.push_back(vertex.getTextureCoordinate());
+            _vertices.push_back(vertex);
+        }
 
-    int _innerTL;
-    int _outerTL;
+        std::vector<Vertex> getVertices() {return _vertices;}
+        std::vector<uint> getIndices() {return _indices;}
+        std::vector<glm::vec3> getPositions() {return _positions;}
+        std::vector<glm::vec3> getNormals() {return _normals;}
+        std::vector<glm::vec2> getTextureCoordinates() {return _textureCoordinates;}
+        void setMVP(glm::mat4 matrix);
 
-    std::vector<Polygon> _polygons;
-    std::vector<Vertex> _vertices;
+        void translate(glm::vec3 vector){_translation = glm::translate(_translation, vector);}
+        void rotate(float angle, glm::vec3 vector) {_rotation = glm::rotate(_rotation, angle, vector);}
+        void scale(glm::vec3 vector) {_scaling = glm::scale(_scaling, vector);}
+        glm::mat4 getModelMatrix() {return _translation * _rotation * _scaling;}
 
-    Material *_material;
+        void initialize();
+        void preDraw();
+        void draw();
 
-private:
-    bool _hasNormals;
-    bool _isTessellable;
-    uint _id;
+        Shader* getShader() {return _material->getShader();}
+        Material* getMaterial() {return _material;}
 
-    uint _locationVertices;
-    uint _locationTextureCoordinates;
-    uint _locationNormals;
+        bool isQuads() {return _indices.size()%3 == 0;}
+        bool isTriangles() {return _indices.size()%4 == 0;}
+        bool isTessellable() {return _isTessellable;}
 
-    uint _triangleCount;
-    uint _vertexCount;
+        void setInnerTL(int value) {_innerTL = value;}
+        void setOuterTL(int value) {_outerTL = value;}
 
-    glm::mat4 _translation;
-    glm::mat4 _rotation;
-    glm::mat4 _scaling;
+        uint getTriangleCount() {return _triangleCount;}
+        uint getId() {return _id;}
 
-    glm::mat4 _mvp;
+    protected:
+        std::vector<uint> _indices;
+        std::vector<IndicePolygon> _indicePolygons;
+        std::vector<glm::vec3> _positions;
+        //std::vector<glm::vec4> _colors;
+        std::vector<glm::vec3> _normals;
+        std::vector<glm::vec2> _textureCoordinates;
 
-    GLuint _vertexArrayId;
-    GLuint _indiceBuffer;
-    GLuint _vertexBuffer;
-    GLuint _colorBuffer;
-    GLuint _textureBuffer;
-    GLuint _normalBuffer;
+        uint *_indiceArray;
+        float *_positionArray;
+        float *_textureArray;
+        float *_normalArray;
 
-    bool _invertNormals;
-};
+        int _innerTL;
+        int _outerTL;
 
-class GeometryTools
-{
-public:
-    static float getDistance(Polygon polygon, glm::vec3 point);
-};
+        std::vector<Polygon> _polygons;
+        std::vector<Vertex> _vertices;
+
+        Material *_material;
+
+    private:
+        bool _hasNormals;
+        bool _isTessellable;
+        uint _id;
+
+        uint _locationVertices;
+        uint _locationTextureCoordinates;
+        uint _locationNormals;
+
+        uint _triangleCount;
+        uint _vertexCount;
+
+        glm::mat4 _translation;
+        glm::mat4 _rotation;
+        glm::mat4 _scaling;
+
+        glm::mat4 _mvp;
+
+        GLuint _vertexArrayId;
+        GLuint _indiceBuffer;
+        GLuint _vertexBuffer;
+        GLuint _colorBuffer;
+        GLuint _textureBuffer;
+        GLuint _normalBuffer;
+
+        bool _invertNormals;
+    };
+
+    class GeometryTools
+    {
+    public:
+        static float getDistance(Polygon polygon, glm::vec3 point);
+    };
+
+}
 
 #endif // GEOMETRY_H
