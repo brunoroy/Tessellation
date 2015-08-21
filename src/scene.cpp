@@ -65,7 +65,7 @@ namespace Tessellation
             {
                 foreach (Geometry *geometry, _geometries)
                 {
-                    std::clog << "geometry[" << geometry->getId() << "]: Shader[" << geometry->getShader()->getValue().toStdString().c_str() << "]" << std::endl;
+                    //std::clog << "geometry[" << geometry->getId() << "]: Shader[" << geometry->getShader()->getValue().toStdString().c_str() << "]" << std::endl;
                     geometry->preDraw();
                     geometry->setMVP(mvp);
                     geometry->draw();

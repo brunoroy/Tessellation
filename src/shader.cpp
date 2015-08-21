@@ -13,7 +13,6 @@ namespace Tessellation
 
     Shader::Shader(QString value, QString filename, bool doTessellation)
     {
-        std::clog << "value: " << value.toStdString().c_str() << std::endl;
         _value = value;
         _doTessellation = doTessellation;
 
@@ -212,7 +211,7 @@ namespace Tessellation
         Shader *shader = new Shader(shaderName, path, doTessellation);
         shader->load(attributes, uniforms);
         _shaders.insert(shaderName, shader);
-        std::clog << "shader " << shaderName.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
+        //std::clog << "shader " << shaderName.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
     }
 
 }
