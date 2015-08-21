@@ -64,6 +64,7 @@ namespace Tessellation
         void updateObjectShaders(const bool doTessellation);
         void updateGrid(Geometry *geometry);
         void showInputPoints(bool value) {_showInputPoints = value;}
+        void addDisplacement(bool value);
 
         void frontCameraView();
         void rightCameraView();

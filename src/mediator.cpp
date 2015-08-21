@@ -173,6 +173,7 @@ namespace Tessellation
     {
         _userInterface.fDisplacement->setEnabled(value);
         _userInterface.actionImportInputPoints->setEnabled(value);
+        _sceneViewer->toggleDisplacement(value);
     }
 
     void Mediator::showInputPoints(bool value)

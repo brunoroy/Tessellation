@@ -41,10 +41,10 @@ namespace Tessellation
 
     void Renderer::loadShaders()
     {
-        Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
-                           QStringList() << "mvp" << "doTessellation" << "color", false);
-        Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
-                           QStringList() << "mvp" << "doTessellation" << "color" << "innerTL" << "outerTL",
+        Shaders::addShader("render", QStringList() << "position" << "uv" << "normal" << "delta",
+                           QStringList() << "mvp" << "doTessellation" << "doDisplacement" << "color", false);
+        Shaders::addShader("render", QStringList() << "position" << "uv" << "normal" << "delta",
+                           QStringList() << "mvp" << "doTessellation" << "doDisplacement" << "color" << "innerTL" << "outerTL",
                            true);
     }
 

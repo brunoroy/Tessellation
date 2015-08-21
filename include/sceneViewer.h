@@ -33,6 +33,7 @@ namespace Tessellation
         }
 
         void toggleTessellation(bool value);
+        void toggleDisplacement(bool value);
         void initializeTS();
 
         void loadAnimation(std::string path, const int frameCount);

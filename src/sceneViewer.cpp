@@ -83,6 +83,12 @@ namespace Tessellation
         update();
     }
 
+    void SceneViewer::toggleDisplacement(bool value)
+    {
+        _scene->addDisplacement(value);
+        update();
+    }
+
     void SceneViewer::initializeTS()
     {
         GLint maxPatchVertices = 0;

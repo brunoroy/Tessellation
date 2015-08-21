@@ -41,13 +41,16 @@ namespace Tessellation
         void disable();
         QString getValue() {return _value;}
 
+        void addDisplacement(bool value) {_doDisplacement = value;}
         bool doTessellation() {return _doTessellation;}
+        bool doDisplacement() {return _doDisplacement;}
         size_t getShaderCount() {return _shaderIds.size();}
 
     private:
         QString _value;
         QStringList _shaderFilenames;
         bool _doTessellation;
+        bool _doDisplacement;
 
         std::vector<GLuint> _shaderIds;
         GLuint _programId;

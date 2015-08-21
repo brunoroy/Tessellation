@@ -145,6 +145,7 @@ namespace Tessellation
         std::vector<glm::vec2> getTextureCoordinates() {return _textureCoordinates;}
         void setMVP(glm::mat4 matrix);
         void setPosition(const int index, glm::vec3 position);
+        void setDisplacement(const int index, glm::vec3 displacement);
 
         void translate(glm::vec3 vector){_translation = glm::translate(_translation, vector);}
         void rotate(float angle, glm::vec3 vector) {_rotation = glm::rotate(_rotation, angle, vector);}
@@ -161,6 +162,11 @@ namespace Tessellation
         bool isQuads() {return _indices.size()%3 == 0;}
         bool isTriangles() {return _indices.size()%4 == 0;}
         bool isTessellable() {return _isTessellable;}
+        bool addDisplacement(bool value)
+        {
+            _addDisplacement = value;
+            _material->getShader()->addDisplacement(_addDisplacement);
+        }
 
         void setInnerTL(int value) {_innerTL = value;}
         void setOuterTL(int value) {_outerTL = value;}
@@ -175,9 +181,9 @@ namespace Tessellation
         std::vector<uint> _indices;
         std::vector<IndicePolygon> _indicePolygons;
         std::vector<glm::vec3> _positions;
-        //std::vector<glm::vec4> _colors;
         std::vector<glm::vec3> _normals;
         std::vector<glm::vec2> _textureCoordinates;
+        std::vector<glm::vec3> _displacements;
 
         uint *_indiceArray;
         int _innerTL;
@@ -192,11 +198,13 @@ namespace Tessellation
     private:
         bool _hasNormals;
         bool _isTessellable;
+        bool _addDisplacement;
         uint _id;
 
         uint _locationVertices;
         uint _locationTextureCoordinates;
         uint _locationNormals;
+        uint _locationDisplacement;
 
         uint _triangleCount;
         uint _vertexCount;
@@ -224,6 +232,7 @@ namespace Tessellation
         static glm::vec3 getNormal(glm::vec3 polygon[3]);
         static float getDistance(glm::vec3 polygon[3], glm::vec3 point);
         static glm::vec3 getProjection(glm::vec3 polygon[3], glm::vec3 point);
+        static glm::vec3 getDisplacement(glm::vec3 polygon[3], glm::vec3 point);
     };
 
 }

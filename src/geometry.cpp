@@ -21,7 +21,8 @@ namespace Tessellation
         _outerTL(1),
         _isTessellable(false),
         _id(0),
-        _type(0)
+        _type(0),
+        _addDisplacement(false)
     {
     }
 
@@ -52,6 +53,9 @@ namespace Tessellation
     Geometry::~Geometry()
     {
         glDeleteBuffers(1, &_vertexBuffer);
+        glDeleteBuffers(1, &_textureBuffer);
+        glDeleteBuffers(1, &_normalBuffer);
+        glDeleteBuffers(1, &_displacementBuffer);
         glDeleteBuffers(1, &_indiceBuffer);
     }
 
@@ -68,6 +72,13 @@ namespace Tessellation
         glGenBuffers(1, &_vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(glm::vec3), &_positions[0], GL_STATIC_DRAW);
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+
+        //displacement
+        _locationDisplacement = _material->getShader()->getAttribute("delta");
+        glGenBuffers(1, &_displacementBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, _displacementBuffer);
+        glBufferData(GL_ARRAY_BUFFER, _displacements.size() * sizeof(glm::vec3), &_displacements[0], GL_STATIC_DRAW);
         glUnmapBuffer(GL_ARRAY_BUFFER);
 
         if(!_textureCoordinates.empty())
@@ -115,6 +126,11 @@ namespace Tessellation
         _positions[index] = position;
     }
 
+    void Geometry::setDisplacement(const int index, glm::vec3 displacement)
+    {
+        _displacements[index] = displacement;
+    }
+
     void Geometry::draw()
     {
         bool doTessellation = false;
@@ -125,9 +141,16 @@ namespace Tessellation
         }
         _material->getShader()->transmitUniform("color", reinterpret_cast<MaterialDefault*>(_material)->getColor());
 
+        bool doDisplacement = _material->getShader()->doDisplacement();
+        _material->getShader()->transmitUniform("doDisplacement", doDisplacement);
+
         glEnableVertexAttribArray(_locationVertices);
         glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
         glVertexAttribPointer(_locationVertices, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+        glEnableVertexAttribArray(_locationDisplacement);
+        glBindBuffer(GL_ARRAY_BUFFER, _displacementBuffer);
+        glVertexAttribPointer(_locationDisplacement, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         if (!_textureCoordinates.empty())
         {
@@ -243,6 +266,7 @@ namespace Tessellation
             {
                 _indices.push_back(i);
                 _positions.push_back(positions.at(_indicePolygons.at(i).vertex));
+                _displacements.push_back(glm::vec3(0.0f));
                 if (!uvs.empty())
                     _textureCoordinates.push_back(uvs.at(_indicePolygons.at(i).uv));
                 if (!normals.empty())
@@ -341,6 +365,7 @@ namespace Tessellation
         {
             _indices.push_back(i);
             _positions.push_back(positions.at(_indicePolygons.at(i).vertex));
+            _displacements.push_back(glm::vec3(0.0f));
              if (!textureCoordinates.empty())
                 _textureCoordinates.push_back(textureCoordinates.at(_indicePolygons.at(i).uv));
             if (!normals.empty())
@@ -403,6 +428,7 @@ namespace Tessellation
                             }
 
                             _positions.push_back(position);
+                            _displacements.push_back(glm::vec3(0.0f));
                             _indices.push_back(_positions.size()-1);
                         }
                     }
@@ -443,24 +469,22 @@ namespace Tessellation
         float d = sn / sd;
 
         return d;
-
-        /*float    sb, sn, sd;
-
-        sn = -dot( PL.n, (P - PL.V0));
-        sd = dot(PL.n, PL.n);
-        sb = sn / sd;
-
-        *B = P + sb * PL.n;
-        return d(P, *B);*/
     }
 
     glm::vec3 GeometryTools::getProjection(glm::vec3 polygon[3], glm::vec3 point)
     {
+        glm::vec3 displacement = getDisplacement(polygon, point);
+
+        return (point + displacement);
+    }
+
+    glm::vec3 GeometryTools::getDisplacement(glm::vec3 polygon[3], glm::vec3 point)
+    {
         float d = getDistance(polygon, point);
         glm::vec3 n = getNormal(polygon);
-        glm::vec3 projectedPoint = point + d * n;
+        glm::vec3 displacement = d * n;
 
-        return projectedPoint;
+        return displacement;
     }
 
 }
