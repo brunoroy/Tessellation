@@ -171,7 +171,7 @@ namespace Tessellation
 
     void Mediator::showInputPoints(bool value)
     {
-        std::clog << __FUNCTION__ << ": " << value << std::endl;
+        _sceneViewer->showInputPoints(value);
     }
 
     void Mediator::changeCurrentFrame(int currentFrame)

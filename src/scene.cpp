@@ -7,7 +7,8 @@ namespace Tessellation
 
     Scene::Scene(Camera *camera):
         _loaded(false),
-        _moveSpeed(0.5f)
+        _moveSpeed(0.5f),
+        _showInputPoints(false)
     {
         _camera.reset(camera);
         _camera->setType(Camera::PERSPECTIVE);
@@ -66,9 +67,13 @@ namespace Tessellation
                 foreach (Geometry *geometry, _geometries)
                 {
                     //std::clog << "geometry[" << geometry->getId() << "]: Shader[" << geometry->getShader()->getValue().toStdString().c_str() << "]" << std::endl;
-                    geometry->preDraw();
-                    geometry->setMVP(mvp);
-                    geometry->draw();
+                    if (geometry->getType() == GeometryType::Mesh ||
+                       (geometry->getType() == GeometryType::Cloud && _showInputPoints))
+                    {
+                        geometry->preDraw();
+                        geometry->setMVP(mvp);
+                        geometry->draw();
+                    }
                 }
             }
             _light->setMVP(mvp);

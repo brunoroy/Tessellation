@@ -43,12 +43,12 @@ namespace Tessellation
         fp = fopen(path.toLatin1(), "rb");
         if (fp)
         {
-            fseek( fp, 0, SEEK_END );
-            length = ftell( fp );
-            fseek( fp, 0, SEEK_SET );
+            fseek(fp, 0, SEEK_END);
+            length = ftell( fp);
+            fseek(fp, 0, SEEK_SET);
             content = new char [length+1];
-            fread( content, sizeof( char ), length, fp );
-            fclose( fp );
+            fread(content, sizeof(char), length, fp);
+            fclose(fp);
             content[length] = '\0';
         }
 

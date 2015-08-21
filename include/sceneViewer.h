@@ -40,6 +40,7 @@ namespace Tessellation
         void playPause();
         void setCurrentFrame(const int currentFrame);
         void loadInputPoints(std::string path);
+        void showInputPoints(bool value);
 
         void setInnerTL(int value);
         void setOuterTL(int value);

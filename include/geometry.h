@@ -13,6 +13,11 @@
 
 namespace Tessellation
 {
+    enum GeometryType
+    {
+        Mesh = 0,
+        Cloud
+    };
 
     struct OBJVertex {
         uint32_t p, n, uv;
@@ -162,6 +167,8 @@ namespace Tessellation
         uint getTriangleCount() {return _triangleCount;}
         uint getId() {return _id;}
 
+        uint getType() {return _type;}
+
     protected:
         std::vector<uint> _indices;
         std::vector<IndicePolygon> _indicePolygons;
@@ -182,6 +189,7 @@ namespace Tessellation
         std::vector<Vertex> _vertices;
 
         Material *_material;
+        uint _type;
 
     private:
         bool _hasNormals;

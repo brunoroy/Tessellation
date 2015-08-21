@@ -138,6 +138,12 @@ namespace Tessellation
         _renderer->render(_currentFrame, animation);
     }
 
+    void SceneViewer::showInputPoints(bool value)
+    {
+        _scene->showInputPoints(value);
+        update();
+    }
+
     void SceneViewer::keyPressEvent(QKeyEvent* event)
     {
         switch (event->key())

@@ -64,6 +64,7 @@ namespace Tessellation
         void updateObjectShaders(const bool doTessellation);
         void updateGrid(Geometry *geometry);
         void updateGrid(std::vector<glm::vec3> points);
+        void showInputPoints(bool value) {_showInputPoints = value;}
 
         void frontCameraView();
         void rightCameraView();
@@ -86,6 +87,7 @@ namespace Tessellation
 
         bool _loaded;
         float _moveSpeed;
+        bool _showInputPoints;
 
         uint _width;
         uint _height;

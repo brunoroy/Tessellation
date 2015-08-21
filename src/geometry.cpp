@@ -20,7 +20,8 @@ namespace Tessellation
         _innerTL(1),
         _outerTL(1),
         _isTessellable(false),
-        _id(0)
+        _id(0),
+        _type(0)
     {
     }
 
@@ -246,6 +247,7 @@ namespace Tessellation
                  << _vertexCount << " vertices." << std::endl;
 
             _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
+            _type = GeometryType::Mesh;
 
             modelFile.close();
             return true;
@@ -340,6 +342,7 @@ namespace Tessellation
         }
 
         _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
+        _type = GeometryType::Mesh;
 
         return true;
     }
@@ -404,7 +407,8 @@ namespace Tessellation
 
             inputFile.close();
 
-            _material = new MaterialDefault(glm::vec4(1.0, 1.0, 1.0, 1.0));
+            _material = new MaterialDefault(glm::vec4(0.0, 1.0, 0.0, 1.0));
+            _type = GeometryType::Cloud;
 
             return true;
         }
