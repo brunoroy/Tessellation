@@ -70,6 +70,9 @@ namespace Tessellation
         void topCameraView();
         bool toggleCameraProjectionType();
 
+    public slots:
+        void updateInputPoints();
+
     private:
         std::shared_ptr<Camera> _camera;
         std::vector<Geometry*> _geometries;

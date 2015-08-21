@@ -55,6 +55,7 @@ namespace Tessellation
         connect(_userInterface.actionPlayer, SIGNAL(triggered(bool)), this, SLOT(showPlayer(bool)));
         connect(_userInterface.actionReset, SIGNAL(triggered()), this, SLOT(resetScene()));
         connect(_userInterface.actionImportInputPoints, SIGNAL(triggered()), this, SLOT(browseInputPoints()));
+        connect(_userInterface.actionUpdateInputPoints, SIGNAL(triggered()), this, SLOT(updateInputPoints()));
 
         //tessellation
         connect(_userInterface.ckTessellation, SIGNAL(toggled(bool)), this, SLOT(toggleTessellation(bool)));
@@ -119,6 +120,11 @@ namespace Tessellation
         _userInterface.widgetDisplacementProperties->setEnabled(false);
         _userInterface.sDensity->setValue(10);
         _userInterface.sDistanceEpsilon->setValue(10);
+    }
+
+    void Mediator::updateInputPoints()
+    {
+        _sceneViewer->updateInputPoints();
     }
 
     void Mediator::toggleTessellation(bool value)

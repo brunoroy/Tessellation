@@ -67,6 +67,12 @@ namespace Tessellation
         //_scene->updateGrid(inputPoints.get());
     }
 
+    void SceneViewer::updateInputPoints()
+    {
+        _scene->updateInputPoints();
+        update();
+    }
+
     void SceneViewer::toggleTessellation(bool value)
     {
         _isTessellated = value;

@@ -144,6 +144,7 @@ namespace Tessellation
         std::vector<glm::vec3> getNormals() {return _normals;}
         std::vector<glm::vec2> getTextureCoordinates() {return _textureCoordinates;}
         void setMVP(glm::mat4 matrix);
+        void setPosition(const int index, glm::vec3 position);
 
         void translate(glm::vec3 vector){_translation = glm::translate(_translation, vector);}
         void rotate(float angle, glm::vec3 vector) {_rotation = glm::rotate(_rotation, angle, vector);}
@@ -179,10 +180,6 @@ namespace Tessellation
         std::vector<glm::vec2> _textureCoordinates;
 
         uint *_indiceArray;
-        float *_positionArray;
-        float *_textureArray;
-        float *_normalArray;
-
         int _innerTL;
         int _outerTL;
 
@@ -216,6 +213,7 @@ namespace Tessellation
         GLuint _colorBuffer;
         GLuint _textureBuffer;
         GLuint _normalBuffer;
+        GLuint _displacementBuffer;
 
         bool _invertNormals;
     };
@@ -223,7 +221,9 @@ namespace Tessellation
     class GeometryTools
     {
     public:
-        static float getDistance(Polygon polygon, glm::vec3 point);
+        static glm::vec3 getNormal(glm::vec3 polygon[3]);
+        static float getDistance(glm::vec3 polygon[3], glm::vec3 point);
+        static glm::vec3 getProjection(glm::vec3 polygon[3], glm::vec3 point);
     };
 
 }

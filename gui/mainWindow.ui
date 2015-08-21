@@ -486,6 +486,7 @@
        <string>Displacement</string>
       </property>
       <addaction name="actionImportInputPoints"/>
+      <addaction name="actionUpdateInputPoints"/>
      </widget>
      <addaction name="actionTessellation"/>
      <addaction name="menuDisplacement"/>
@@ -678,6 +679,14 @@
    </property>
    <property name="shortcut">
     <string>Alt+I</string>
+   </property>
+  </action>
+  <action name="actionUpdateInputPoints">
+   <property name="text">
+    <string>Update</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
    </property>
   </action>
  </widget>

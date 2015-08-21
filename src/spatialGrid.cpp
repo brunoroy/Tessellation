@@ -22,9 +22,9 @@ namespace Tessellation
     void SpatialGrid::initialize(Volume domain)
     {
         _domain = domain;
-        float width = pow(2.0, ceil(_domain.getWidth())+2);
-        float height = pow(2.0, ceil(_domain.getHeight())+2);
-        float depth = pow(2.0, ceil(_domain.getDepth())+2);
+        float width = pow(2.0, ceil(_domain.getWidth()));
+        float height = pow(2.0, ceil(_domain.getHeight()));
+        float depth = pow(2.0, ceil(_domain.getDepth()));
         _resolution = Volume(width, height, depth);
 
         _grid.clear();

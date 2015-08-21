@@ -46,6 +46,7 @@ namespace Tessellation
         void setDistanceEpsilon(int value);
         void browseInputPoints();
         void showInputPoints(bool value);
+        void updateInputPoints();
 
         //player
         void changeCurrentFrame(int currentFrame);

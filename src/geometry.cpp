@@ -110,6 +110,11 @@ namespace Tessellation
         _material->getShader()->transmitUniform("mvp", _mvp);
     }
 
+    void Geometry::setPosition(const int index, glm::vec3 position)
+    {
+        _positions[index] = position;
+    }
+
     void Geometry::draw()
     {
         bool doTessellation = false;
@@ -417,13 +422,21 @@ namespace Tessellation
         return false;
     }
 
-    float GeometryTools::getDistance(Polygon polygon, glm::vec3 point)
+    glm::vec3 GeometryTools::getNormal(glm::vec3 polygon[3])
     {
-        glm::vec3 p0 = polygon.positions[0];
-        glm::vec3 v1 = polygon.positions[1] - p0;
-        glm::vec3 v2 = polygon.positions[2] - p0;
+        glm::vec3 p0 = polygon[0];
+        glm::vec3 v1 = polygon[1] - p0;
+        glm::vec3 v2 = polygon[2] - p0;
 
         glm::vec3 n = glm::cross(v1, v2);
+
+        return n;
+    }
+
+    float GeometryTools::getDistance(glm::vec3 polygon[3], glm::vec3 point)
+    {
+        glm::vec3 p0 = polygon[0];
+        glm::vec3 n = getNormal(polygon);
 
         float sn = -glm::dot(n, point-p0);
         float sd = glm::dot(n, n);
@@ -439,6 +452,15 @@ namespace Tessellation
 
         *B = P + sb * PL.n;
         return d(P, *B);*/
+    }
+
+    glm::vec3 GeometryTools::getProjection(glm::vec3 polygon[3], glm::vec3 point)
+    {
+        float d = getDistance(polygon, point);
+        glm::vec3 n = getNormal(polygon);
+        glm::vec3 projectedPoint = point + d * n;
+
+        return projectedPoint;
     }
 
 }

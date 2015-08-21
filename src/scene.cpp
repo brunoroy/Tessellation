@@ -118,6 +118,65 @@ namespace Tessellation
                 _grid->insertPoint(i, point);
             }
             std::clog << __FUNCTION__ << ": " << geometry->getVertexCount() << " points added.\n";
+
+            /*for (int i = 0; i < _grid->getSize(); i++)
+            {
+                GridCell &cell = _grid->getCell(i);
+                PointList points = cell.getPoints();
+                //if (!points.empty())
+                //    std::clog << "points[" << i << "]: " << points.size() << std::endl;
+                PolygonList polygons = cell.getPolygons();
+                //if (!polygons.empty())
+                //    std::clog << "polygons[" << i << "]: " << polygons.size() << std::endl;
+                for (int j = 0; j < points.size(); j++)
+                {
+                    Point point = points.at(j);
+                    for (int k = 0; k < polygons.size(); k++)
+                    {
+                        GridPolygon polygon = polygons.at(k);
+                        float distance = GeometryTools::getDistance(polygon.getVertices(), point.getPosition());
+                        std::clog << "d[p=" << polygon.getId() << "-v=" << point.getId() << "]: " << distance << std::endl;
+                        geometry->setPosition(point.getId(), GeometryTools::getProjection(polygon.getVertices(), point.getPosition()));
+                    }
+                }
+            }*/
+        }
+    }
+
+    void Scene::updateInputPoints()
+    {
+        std::clog << __FUNCTION__ << std::endl;
+        //std::clog << "cells: " << _grid->getSize() << std::endl;
+        foreach (Geometry *geometry, _geometries)
+        {
+            if (geometry->getType() == GeometryType::Cloud)
+            {
+                for (int i = 0; i < _grid->getSize(); i++)
+                {
+                    GridCell &cell = _grid->getCell(i);
+                    PointList points = cell.getPoints();
+                    //if (!points.empty())
+                    //    std::clog << "points[" << i << "]: " << points.size() << std::endl;
+                    PolygonList polygons = cell.getPolygons();
+                    //if (!polygons.empty())
+                    //    std::clog << "polygons[" << i << "]: " << polygons.size() << std::endl;
+                    for (int j = 0; j < points.size(); j++)
+                    {
+                        Point point = points.at(j);
+                        for (int k = 0; k < polygons.size(); k++)
+                        {
+                            GridPolygon polygon = polygons.at(k);
+                            float distance = GeometryTools::getDistance(polygon.getVertices(), point.getPosition());
+                            std::clog << "d[p=" << polygon.getId() << "-v=" << point.getId() << "]: " << distance << std::endl;
+                            glm::vec3 projectedPoint = GeometryTools::getProjection(polygon.getVertices(), point.getPosition());
+                            //std::clog << "after: p{" << point.getPosition().x << "," << point.getPosition().y << "," << point.getPosition().z << "}\n";
+                            geometry->setPosition(point.getId(), projectedPoint);
+                            //std::clog << "after: p{" << projectedPoint.x << "," << projectedPoint.y << "," << projectedPoint.z << "}\n";
+                        }
+                    }
+                }
+            }
+            geometry->initialize();
         }
     }
 

@@ -41,10 +41,13 @@ namespace Tessellation
         void setCurrentFrame(const int currentFrame);
         void loadInputPoints(std::string path);
         void showInputPoints(bool value);
+        void updateInputPoints();
 
         void setInnerTL(int value);
         void setOuterTL(int value);
         bool isTessellated() {return _isTessellated;}
+
+        Scene* getScene() {return _scene.get();}
 
     protected:
         void init();
