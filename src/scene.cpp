@@ -66,7 +66,6 @@ namespace Tessellation
             {
                 foreach (Geometry *geometry, _geometries)
                 {
-                    //std::clog << "geometry[" << geometry->getId() << "]: Shader[" << geometry->getShader()->getValue().toStdString().c_str() << "]" << std::endl;
                     if (geometry->getType() == GeometryType::Mesh ||
                        (geometry->getType() == GeometryType::Cloud && _showInputPoints))
                     {

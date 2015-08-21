@@ -74,13 +74,6 @@ namespace Tessellation
         glBufferData(GL_ARRAY_BUFFER, _positions.size() * sizeof(glm::vec3), &_positions[0], GL_STATIC_DRAW);
         glUnmapBuffer(GL_ARRAY_BUFFER);
 
-        //displacement
-        _locationDisplacement = _material->getShader()->getAttribute("delta");
-        glGenBuffers(1, &_displacementBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, _displacementBuffer);
-        glBufferData(GL_ARRAY_BUFFER, _displacements.size() * sizeof(glm::vec3), &_displacements[0], GL_STATIC_DRAW);
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-
         if(!_textureCoordinates.empty())
         {
             //texture
@@ -100,6 +93,13 @@ namespace Tessellation
             glBufferData(GL_ARRAY_BUFFER, _normals.size() * sizeof(glm::vec3), &_normals[0], GL_STATIC_DRAW);
             glUnmapBuffer(GL_ARRAY_BUFFER);
         }
+
+        //displacement
+        _locationDisplacement = _material->getShader()->getAttribute("delta");
+        glGenBuffers(1, &_displacementBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, _displacementBuffer);
+        glBufferData(GL_ARRAY_BUFFER, _displacements.size() * sizeof(glm::vec3), &_displacements[0], GL_STATIC_DRAW);
+        glUnmapBuffer(GL_ARRAY_BUFFER);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -133,24 +133,15 @@ namespace Tessellation
 
     void Geometry::draw()
     {
-        bool doTessellation = false;
-        if (_isTessellable)
-        {
-            doTessellation = _material->getShader()->doTessellation();
-            _material->getShader()->transmitUniform("doTessellation", doTessellation);
-        }
+        bool doTessellation = _material->getShader()->doTessellation();
+        _material->getShader()->transmitUniform("doTessellation", doTessellation);
         _material->getShader()->transmitUniform("color", reinterpret_cast<MaterialDefault*>(_material)->getColor());
-
         bool doDisplacement = _material->getShader()->doDisplacement();
         _material->getShader()->transmitUniform("doDisplacement", doDisplacement);
 
         glEnableVertexAttribArray(_locationVertices);
         glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
         glVertexAttribPointer(_locationVertices, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-        glEnableVertexAttribArray(_locationDisplacement);
-        glBindBuffer(GL_ARRAY_BUFFER, _displacementBuffer);
-        glVertexAttribPointer(_locationDisplacement, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         if (!_textureCoordinates.empty())
         {
@@ -165,6 +156,10 @@ namespace Tessellation
             glBindBuffer(GL_ARRAY_BUFFER, _normalBuffer);
             glVertexAttribPointer(_locationNormals, 3, GL_FLOAT, GL_FALSE, 0, 0);
         }
+
+        glEnableVertexAttribArray(_locationDisplacement);
+        glBindBuffer(GL_ARRAY_BUFFER, _displacementBuffer);
+        glVertexAttribPointer(_locationDisplacement, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indiceBuffer);
         if (_isTessellable) //mesh
@@ -181,6 +176,7 @@ namespace Tessellation
             glPointSize(1.0f);
         }
 
+        glDisableVertexAttribArray(3);
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(0);

@@ -11,15 +11,11 @@ namespace Tessellation
     class Material
     {
     public:
-        Material(QString value) {_shader = Shaders::getShader(value);}//_shader.reset(Shaders::getShader(value));}
+        Material(QString value) {_shader = Shaders::getShader(value);}
         ~Material() {}
 
         void initialize();
-        void setShader(QString value)
-        {
-            //std::clog << "changing shader from " << _shader->getValue().toStdString().c_str() << " to " << value.toStdString().c_str() << std::endl;
-            _shader = Shaders::getShader(value);
-        }
+        void setShader(QString value) {_shader = Shaders::getShader(value);}
         bool equals(QString value) {return _shader->getValue() == value;}
         Shader* getShader() {return _shader;}
         virtual void bind() {}

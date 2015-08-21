@@ -54,10 +54,8 @@ namespace Tessellation
         for (int i = 0; i < 3; i++)
             meanPosition += vertices[i];
         meanPosition /= 3;
-        //std::clog << "mean: {" << meanPosition.x << "," << meanPosition.y << "," << meanPosition.z << "}" << std::endl;
 
         uint cellIndex = getCellIndex(meanPosition);
-        //std::clog << "cell: " << cellIndex << std::endl;
         GridPolygon polygon(id, vertices);
         _grid[cellIndex].getPolygons().push_back(polygon);
     }

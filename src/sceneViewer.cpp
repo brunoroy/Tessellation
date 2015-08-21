@@ -62,9 +62,6 @@ namespace Tessellation
     void SceneViewer::loadInputPoints(std::string path)
     {
         _scene->loadScene(path, false);
-        //_scene->loadScene(path);
-        //std::shared_ptr<InputPoints> inputPoints(new InputPoints(path));
-        //_scene->updateGrid(inputPoints.get());
     }
 
     void SceneViewer::updateInputPoints()
@@ -78,7 +75,6 @@ namespace Tessellation
         _isTessellated = value;
         if (value)
             initializeTS();
-        //_renderer->loadShaders(value);
         _scene->updateObjectShaders(value);
         update();
     }

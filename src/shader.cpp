@@ -216,7 +216,7 @@ namespace Tessellation
         Shader *shader = new Shader(shaderName, path, doTessellation);
         shader->load(attributes, uniforms);
         _shaders.insert(shaderName, shader);
-        //std::clog << "shader " << shaderName.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
+        std::clog << "shader " << shaderName.toStdString().c_str() << " loaded with " << attributes.size() << " attributes and " << uniforms.size() << " uniforms.\n";
     }
 
 }
