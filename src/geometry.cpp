@@ -118,6 +118,7 @@ namespace Tessellation
             doTessellation = _material->getShader()->doTessellation();
             _material->getShader()->transmitUniform("doTessellation", doTessellation);
         }
+        _material->getShader()->transmitUniform("color", reinterpret_cast<MaterialDefault*>(_material)->getColor());
 
         glEnableVertexAttribArray(_locationVertices);
         glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
@@ -147,7 +148,7 @@ namespace Tessellation
         }
         else //point cloud
         {
-            glPointSize(2.0f);
+            glPointSize(5.0f);
             glDrawArrays(GL_POINTS, 0, _indices.size());
             glPointSize(1.0f);
         }

@@ -52,6 +52,8 @@ namespace Tessellation
             _shader->bind();
         }
 
+        glm::vec4 getColor() {return _color;}
+
     private:
         glm::vec4 _color;
     };

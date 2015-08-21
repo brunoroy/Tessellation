@@ -179,6 +179,11 @@ namespace Tessellation
         glUniform3f(_uniforms.value(name, -1), vec3.x, vec3.y, vec3.z);
     }
 
+    void Shader::transmitUniform(QString name, const glm::vec4 &vec4)
+    {
+        glUniform4f(_uniforms.value(name, -1), vec4.x, vec4.y, vec4.z, vec4.w);
+    }
+
     void Shader::transmitUniform(QString name, const glm::mat3 &mat3)
     {
         glUniformMatrix3fv(_uniforms.value(name, -1), 1, GL_TRUE, &mat3[0][0]);

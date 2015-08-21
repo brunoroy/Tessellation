@@ -32,6 +32,7 @@ namespace Tessellation
         void transmitUniform(QString name, float f1, float f2);
         void transmitUniform(QString name, float f1, float f2, float f3);
         void transmitUniform(QString name, const glm::vec3 &vec3);
+        void transmitUniform(QString name, const glm::vec4 &vec4);
         void transmitUniform(QString name, const glm::mat3 &mat3);
         void transmitUniform(QString name, const glm::mat4 &mat4);
         void transmitUniform(QString name, bool b);
