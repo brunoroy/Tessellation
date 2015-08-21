@@ -165,6 +165,7 @@ namespace Tessellation
         void setOuterTL(int value) {_outerTL = value;}
 
         uint getTriangleCount() {return _triangleCount;}
+        uint getVertexCount() {return _vertexCount;}
         uint getId() {return _id;}
 
         uint getType() {return _type;}

@@ -91,30 +91,34 @@ namespace Tessellation
         Geometry* geometry = new Geometry(QString(path.c_str()), geometryId, isTessellable);
         geometry->scale(glm::vec3(10.0f, 10.0f, 10.0f));
         addGeometry(geometry);
-        //updateGrid(mesh);
+        updateGrid(geometry);
     }
 
     void Scene::updateGrid(Geometry *geometry)
     {
-        for (int i = 0; i < geometry->getTriangleCount(); i++)
+        if (geometry->getType() == GeometryType::Mesh)
         {
-            //std::clog << "processing polygon " << i << "." << std::endl;
-            glm::vec3 vertices[3];
-            for (int v = 0; v < 3; v++)
+            for (int i = 0; i < geometry->getTriangleCount(); i++)
             {
-                uint vertexIndex = geometry->getIndices().at(i*3+v);
-                //std::clog << "index: " << vertexIndex << std::endl;
-                vertices[v] = geometry->getPositions().at(vertexIndex);
-                //std::clog << "v[" << v << "]: { " << vertices[v].x << "," << vertices[v].y << "," << vertices[v].z << "}" << std::endl;
+                glm::vec3 vertices[3];
+                for (int v = 0; v < 3; v++)
+                {
+                    uint vertexIndex = geometry->getIndices().at(i*3+v);
+                    vertices[v] = geometry->getPositions().at(vertexIndex);
+                }
+                _grid->insertPolygon(i, vertices);
             }
-            _grid->insertPolygon(i, vertices);
+            std::clog << __FUNCTION__ << ": " << geometry->getTriangleCount() << " triangles added.\n";
         }
-    }
-
-    void Scene::updateGrid(std::vector<glm::vec3> points)
-    {
-        for (size_t i = 0; i < points.size(); i++)
-            _grid->insertPoint(i, points.at(i));
+        else if (geometry->getType() == GeometryType::Cloud)
+        {
+            for (int i = 0; i < geometry->getVertexCount(); i++)
+            {
+                glm::vec3 point = geometry->getPositions().at(i);
+                _grid->insertPoint(i, point);
+            }
+            std::clog << __FUNCTION__ << ": " << geometry->getVertexCount() << " points added.\n";
+        }
     }
 
     void Scene::loadLight()
