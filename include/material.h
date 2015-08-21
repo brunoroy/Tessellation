@@ -5,52 +5,57 @@
 #include <iostream>
 #include <cassert>
 
-class Material
+namespace Tessellation
 {
-public:
-    Material(QString value) {_shader = Shaders::getShader(value);}//_shader.reset(Shaders::getShader(value));}
-    ~Material() {}
 
-    void initialize();
-    void setShader(QString value)
+    class Material
     {
-        //std::clog << "changing shader from " << _shader->getValue().toStdString().c_str() << " to " << value.toStdString().c_str() << std::endl;
-        _shader = Shaders::getShader(value);
-    }
-    bool equals(QString value) {return _shader->getValue() == value;}
-    Shader* getShader() {return _shader;}
-    virtual void bind() {}
+    public:
+        Material(QString value) {_shader = Shaders::getShader(value);}//_shader.reset(Shaders::getShader(value));}
+        ~Material() {}
 
-protected:
-    Shader* _shader;
+        void initialize();
+        void setShader(QString value)
+        {
+            //std::clog << "changing shader from " << _shader->getValue().toStdString().c_str() << " to " << value.toStdString().c_str() << std::endl;
+            _shader = Shaders::getShader(value);
+        }
+        bool equals(QString value) {return _shader->getValue() == value;}
+        Shader* getShader() {return _shader;}
+        virtual void bind() {}
 
-private:
-    virtual void configShader() {}
-};
+    protected:
+        Shader* _shader;
 
-//Default mesh material
-class MaterialDefault : public Material
-{
-public:
-    MaterialDefault(glm::vec4 color):
-        Material("render"), _color(color) {}
+    private:
+        virtual void configShader() {}
+    };
 
-    void bind()
+    //Default mesh material
+    class MaterialDefault : public Material
     {
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glDisable(GL_BLEND);
+    public:
+        MaterialDefault(glm::vec4 color):
+            Material("render"), _color(color) {}
 
-        configShader();
-    }
+        void bind()
+        {
+            glEnable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
+            glDisable(GL_BLEND);
 
-    void configShader()
-    {
-        _shader->bind();
-    }
+            configShader();
+        }
 
-private:
-    glm::vec4 _color;
-};
+        void configShader()
+        {
+            _shader->bind();
+        }
+
+    private:
+        glm::vec4 _color;
+    };
+
+}
 
 #endif // MATERIAL_H

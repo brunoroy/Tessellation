@@ -4,31 +4,36 @@
 #include <vector>
 #include "scene.h"
 
-class Renderer
+namespace Tessellation
 {
-public:
-    Renderer();
-    ~Renderer();
 
-    void loadShaders();
-    void initialize(Scene *scene);
-    void resize(int width, int height);
-    bool isInitialized() {return _initialized;}
+    class Renderer
+    {
+    public:
+        Renderer();
+        ~Renderer();
 
-    void render(const int currentFrame, const bool animation = false);
+        void loadShaders();
+        void initialize(Scene *scene);
+        void resize(int width, int height);
+        bool isInitialized() {return _initialized;}
 
-    void getModelViewProjectionMatrix(GLfloat matrix[16]);
+        void render(const int currentFrame, const bool animation = false);
 
-protected:
-    Shader* getShader(QString value) {return Shaders::getShader(value);}
+        void getModelViewProjectionMatrix(GLfloat matrix[16]);
 
-private:
-    float _width, _height;
-    bool _initialized;
-    bool _doTessellation;
+    protected:
+        Shader* getShader(QString value) {return Shaders::getShader(value);}
 
-    qglviewer::Camera *_camera;
-    Scene *_scene;
-};
+    private:
+        float _width, _height;
+        bool _initialized;
+        bool _doTessellation;
+
+        qglviewer::Camera *_camera;
+        Scene *_scene;
+    };
+
+}
 
 #endif // RENDERER_H

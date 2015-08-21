@@ -10,61 +10,66 @@
 
 #include <glm/glm.hpp>
 
-class Shader
+namespace Tessellation
 {
-public:
-    Shader(QString value, QString filename, bool doTessellation = false);
-    ~Shader();
 
-    void initialize();
-    void load(QStringList attributes, QStringList uniforms);
-    void bind();
+    class Shader
+    {
+    public:
+        Shader(QString value, QString filename, bool doTessellation = false);
+        ~Shader();
 
-    GLint getVariable(std::string strVariable);
-    GLuint getProgramId() {return _programId;}
-    uint getAttribute(QString name);
-    uint getUniform(QString name);
-    void transmitUniform(QString name, int i);
-    void transmitUniform(QString name, float f);
-    void transmitUniform(QString name, float f1, float f2);
-    void transmitUniform(QString name, float f1, float f2, float f3);
-    void transmitUniform(QString name, const glm::vec3 &vec3);
-    void transmitUniform(QString name, const glm::mat3 &mat3);
-    void transmitUniform(QString name, const glm::mat4 &mat4);
-    void transmitUniform(QString name, bool b);
+        void initialize();
+        void load(QStringList attributes, QStringList uniforms);
+        void bind();
 
-    void enable();
-    void disable();
-    QString getValue() {return _value;}
+        GLint getVariable(std::string strVariable);
+        GLuint getProgramId() {return _programId;}
+        uint getAttribute(QString name);
+        uint getUniform(QString name);
+        void transmitUniform(QString name, int i);
+        void transmitUniform(QString name, float f);
+        void transmitUniform(QString name, float f1, float f2);
+        void transmitUniform(QString name, float f1, float f2, float f3);
+        void transmitUniform(QString name, const glm::vec3 &vec3);
+        void transmitUniform(QString name, const glm::mat3 &mat3);
+        void transmitUniform(QString name, const glm::mat4 &mat4);
+        void transmitUniform(QString name, bool b);
 
-    bool doTessellation() {return _doTessellation;}
-    size_t getShaderCount() {return _shaderIds.size();}
+        void enable();
+        void disable();
+        QString getValue() {return _value;}
 
-private:
-    QString _value;
-    QStringList _shaderFilenames;
-    bool _doTessellation;
+        bool doTessellation() {return _doTessellation;}
+        size_t getShaderCount() {return _shaderIds.size();}
 
-    std::vector<GLuint> _shaderIds;
-    GLuint _programId;
-    GLuint _matrixId;
+    private:
+        QString _value;
+        QStringList _shaderFilenames;
+        bool _doTessellation;
 
-    QHash<QString, uint> _attributes;
-    QHash<QString, uint> _uniforms;
+        std::vector<GLuint> _shaderIds;
+        GLuint _programId;
+        GLuint _matrixId;
 
-    char* loadShaderFile(QString path);
-};
+        QHash<QString, uint> _attributes;
+        QHash<QString, uint> _uniforms;
 
-class Shaders
-{
-public:
-    static void clear() {_shaders.clear();}
-    static Shader* getShader(QString value);
-    static void addShader(QString value, QStringList attributes, QStringList uniforms, bool doTessellation = false);
-    static size_t getCount() {return _shaders.size();}
+        char* loadShaderFile(QString path);
+    };
 
-private:
-    static QHash<QString, Shader*> _shaders;
-};
+    class Shaders
+    {
+    public:
+        static void clear() {_shaders.clear();}
+        static Shader* getShader(QString value);
+        static void addShader(QString value, QStringList attributes, QStringList uniforms, bool doTessellation = false);
+        static size_t getCount() {return _shaders.size();}
+
+    private:
+        static QHash<QString, Shader*> _shaders;
+    };
+
+}
 
 #endif // SHADER_H

@@ -9,52 +9,57 @@
 #include <memory>
 #include "sceneViewer.h"
 
-class Mediator : public QObject
+namespace Tessellation
 {
-Q_OBJECT
-public:
-    Mediator();
-    ~Mediator();
 
-    void initViewer();
-    void initSignalSlot();
-    void initUserInterface();
+    class Mediator : public QObject
+    {
+    Q_OBJECT
+    public:
+        Mediator();
+        ~Mediator();
 
-public slots:
-    //toolbar
-    void importModel();
-    void importAnimation();
-    void showShaders(bool value);
-    void showPlayer(bool value);
-    void defaultValues();
-    void resetScene();
-    void saveSnapshot();
-    void about();
+        void initViewer();
+        void initSignalSlot();
+        void initUserInterface();
 
-    //tessellation
-    void toggleTessellation(bool value);
-    void setInnerLevel(int level);
-    void setOuterLevel(int level);
-    void setUniform(bool value);
+    public slots:
+        //toolbar
+        void importModel();
+        void importAnimation();
+        void showShaders(bool value);
+        void showPlayer(bool value);
+        void defaultValues();
+        void resetScene();
+        void saveSnapshot();
+        void about();
 
-    //displacement
-    void toggleDisplacement(bool value);
-    void setDensity(int value);
-    void setDistanceEpsilon(int value);
-    void browseInputPoints();
-    void showInputPoints(bool value);
+        //tessellation
+        void toggleTessellation(bool value);
+        void setInnerLevel(int level);
+        void setOuterLevel(int level);
+        void setUniform(bool value);
 
-    //player
-    void changeCurrentFrame(int currentFrame);
-    void playPause();
+        //displacement
+        void toggleDisplacement(bool value);
+        void setDensity(int value);
+        void setDistanceEpsilon(int value);
+        void browseInputPoints();
+        void showInputPoints(bool value);
 
-private:
-    std::shared_ptr<QMainWindow> _mainWindow;
-    std::shared_ptr<SceneViewer> _sceneViewer;
-    std::shared_ptr<QGridLayout> _viewerLayout;
-    Ui_MainWindow _userInterface;
+        //player
+        void changeCurrentFrame(int currentFrame);
+        void playPause();
 
-    float getValue(int value);
-};
+    private:
+        std::shared_ptr<QMainWindow> _mainWindow;
+        std::shared_ptr<SceneViewer> _sceneViewer;
+        std::shared_ptr<QGridLayout> _viewerLayout;
+        Ui_MainWindow _userInterface;
+
+        float getValue(int value);
+    };
+
+}
 
 #endif // MEDIATOR_H

@@ -12,58 +12,63 @@
 #include "ui_mainWindow.h"
 #include <glm/glm.hpp>
 
-using namespace qglviewer;
-
-class SceneViewer : public QGLViewer
+namespace Tessellation
 {
-public:
-    SceneViewer(Ui_MainWindow *userInterface, QGLFormat glFormat);
-    ~SceneViewer();
 
-    void drawCube();
-    void drawPlane();
-    bool isReady();
-    void reset()
+    using namespace qglviewer;
+
+    class SceneViewer : public QGLViewer
     {
-        _scene->reset();
-        update();
-    }
+    public:
+        SceneViewer(Ui_MainWindow *userInterface, QGLFormat glFormat);
+        ~SceneViewer();
 
-    void toggleTessellation(bool value);
-    void initializeTS();
+        void drawCube();
+        void drawPlane();
+        bool isReady();
+        void reset()
+        {
+            _scene->reset();
+            update();
+        }
 
-    void loadAnimation(std::string path, const int frameCount);
-    void loadModel(std::string path);
-    void playPause();
-    void setCurrentFrame(const int currentFrame);
-    void loadInputPoints(std::string path);
+        void toggleTessellation(bool value);
+        void initializeTS();
 
-    void setInnerTL(int value);
-    void setOuterTL(int value);
-    bool isTessellated() {return _isTessellated;}
+        void loadAnimation(std::string path, const int frameCount);
+        void loadModel(std::string path);
+        void playPause();
+        void setCurrentFrame(const int currentFrame);
+        void loadInputPoints(std::string path);
 
-protected:
-    void init();
-    void draw();
-    void animate();
-    void resizeGL(int width, int height);
-    void keyPressEvent(QKeyEvent* event);
+        void setInnerTL(int value);
+        void setOuterTL(int value);
+        bool isTessellated() {return _isTessellated;}
 
-private:
-    bool _isInitialized;
-    bool _isWireframe;
-    std::string _animationPath;
-    int _currentFrame;
-    bool _isTessellated;
+    protected:
+        void init();
+        void draw();
+        void animate();
+        void resizeGL(int width, int height);
+        void keyPressEvent(QKeyEvent* event);
 
-    std::shared_ptr<Scene> _scene;
-    std::shared_ptr<Renderer> _renderer;
-    std::shared_ptr<ScenePlayer> _player;
+    private:
+        bool _isInitialized;
+        bool _isWireframe;
+        std::string _animationPath;
+        int _currentFrame;
+        bool _isTessellated;
 
-    qglviewer::Vec _cameraOrigin;
-    qglviewer::Vec _cameraDirection;
+        std::shared_ptr<Scene> _scene;
+        std::shared_ptr<Renderer> _renderer;
+        std::shared_ptr<ScenePlayer> _player;
 
-    Ui_MainWindow *_userInterface;
-};
+        qglviewer::Vec _cameraOrigin;
+        qglviewer::Vec _cameraDirection;
+
+        Ui_MainWindow *_userInterface;
+    };
+
+}
 
 #endif // SCENEVIEWER_H

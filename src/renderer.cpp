@@ -9,51 +9,56 @@
 
 #include "shader.h"
 
-Renderer::Renderer():
-    _initialized(false),
-    _doTessellation(false)
+namespace Tessellation
 {
-    loadShaders();
-}
 
-Renderer::~Renderer()
-{
-}
+    Renderer::Renderer():
+        _initialized(false),
+        _doTessellation(false)
+    {
+        loadShaders();
+    }
 
-void Renderer::initialize(Scene *scene)
-{
-    _scene = scene;
-    _camera = scene->getCamera();
-    _width = _scene->getWidth();
-    _height = _scene->getHeight();
+    Renderer::~Renderer()
+    {
+    }
 
-    _initialized = true;
-}
+    void Renderer::initialize(Scene *scene)
+    {
+        _scene = scene;
+        _camera = scene->getCamera();
+        _width = _scene->getWidth();
+        _height = _scene->getHeight();
 
-void Renderer::resize(int width, int height)
-{
-    _width = width;
-    _height = height;
-}
+        _initialized = true;
+    }
 
-void Renderer::loadShaders()
-{
-    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
-                       QStringList() << "mvp" << "doTessellation", false);
-    Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
-                       QStringList() << "mvp" << "doTessellation" << "innerTL" << "outerTL",
-                       true);
-}
+    void Renderer::resize(int width, int height)
+    {
+        _width = width;
+        _height = height;
+    }
 
-void Renderer::render(const int currentFrame, const bool animation)
-{
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearDepth(1.0f);
+    void Renderer::loadShaders()
+    {
+        Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
+                           QStringList() << "mvp" << "doTessellation", false);
+        Shaders::addShader("render", QStringList() << "position" << "uv" << "normal",
+                           QStringList() << "mvp" << "doTessellation" << "innerTL" << "outerTL",
+                           true);
+    }
 
-    _scene->draw(currentFrame, animation);
-}
+    void Renderer::render(const int currentFrame, const bool animation)
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearDepth(1.0f);
 
-void Renderer::getModelViewProjectionMatrix(GLfloat matrix[16])
-{
-    _scene->getCamera()->getModelViewProjectionMatrix(matrix);
+        _scene->draw(currentFrame, animation);
+    }
+
+    void Renderer::getModelViewProjectionMatrix(GLfloat matrix[16])
+    {
+        _scene->getCamera()->getModelViewProjectionMatrix(matrix);
+    }
+
 }

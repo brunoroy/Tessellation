@@ -10,84 +10,89 @@
 
 #include <QGLViewer/qglviewer.h>
 
-typedef long long ll;
-
-using namespace qglviewer;
-
-class Scene
+namespace Tessellation
 {
-public:
-    Scene(Camera *camera);
-    ~Scene();
 
-    void initialize(uint width, uint height);
-    void draw(const int currentFrame, const bool animation = false);
-    void updateConstraints();
-    glm::mat4 updateMVP();
-    bool isLoaded() {return _loaded;}
-    void setLoaded(bool loaded) {_loaded = loaded;}
-    void resize(uint width, uint height);
+    typedef long long ll;
 
-    Camera* getCamera() {return _camera.get();}
-    void addGeometry(Geometry* geometry)
+    using namespace qglviewer;
+
+    class Scene
     {
-        _geometries.push_back(geometry);
-    }
-    std::vector<Geometry*> getGeometries() {return _geometries;}
-    Geometry* getGeometry(uint index) {return _geometries.at(index);}
+    public:
+        Scene(Camera *camera);
+        ~Scene();
 
-    void moveForward();
-    void moveBackward();
-    void strafeLeft();
-    void strafeRight();
+        void initialize(uint width, uint height);
+        void draw(const int currentFrame, const bool animation = false);
+        void updateConstraints();
+        glm::mat4 updateMVP();
+        bool isLoaded() {return _loaded;}
+        void setLoaded(bool loaded) {_loaded = loaded;}
+        void resize(uint width, uint height);
 
-    glm::mat4 getCurrentMVP();
-    void loadModel(std::string path, const bool isTessellable = true);
-    void loadLight();
-    void loadScene(std::string path, const bool isTessellable = true);
-    void loadAnimation(std::string path, const int frameCount, QProgressBar &progress);
-    void reset()
-    {
-        _loaded = false;
-        _geometries.clear();
-    }
+        Camera* getCamera() {return _camera.get();}
+        void addGeometry(Geometry* geometry)
+        {
+            _geometries.push_back(geometry);
+        }
+        std::vector<Geometry*> getGeometries() {return _geometries;}
+        Geometry* getGeometry(uint index) {return _geometries.at(index);}
 
-    uint getWidth() {return _width;}
-    uint getHeight() {return _height;}
+        void moveForward();
+        void moveBackward();
+        void strafeLeft();
+        void strafeRight();
 
-    void setLight(Light *light);
-    Light* getLight() {return _light.get();}
+        glm::mat4 getCurrentMVP();
+        void loadModel(std::string path, const bool isTessellable = true);
+        void loadLight();
+        void loadScene(std::string path, const bool isTessellable = true);
+        void loadAnimation(std::string path, const int frameCount, QProgressBar &progress);
+        void reset()
+        {
+            _loaded = false;
+            _geometries.clear();
+        }
 
-    void updateObjectShaders(const bool doTessellation);
-    void updateGrid(Geometry *geometry);
-    void updateGrid(std::vector<glm::vec3> points);
+        uint getWidth() {return _width;}
+        uint getHeight() {return _height;}
 
-    void frontCameraView();
-    void rightCameraView();
-    void topCameraView();
-    bool toggleCameraProjectionType();
+        void setLight(Light *light);
+        Light* getLight() {return _light.get();}
 
-private:
-    std::shared_ptr<Camera> _camera;
-    std::vector<Geometry*> _geometries;
-    std::shared_ptr<Light> _light;
-    std::shared_ptr<SpatialGrid> _grid;
+        void updateObjectShaders(const bool doTessellation);
+        void updateGrid(Geometry *geometry);
+        void updateGrid(std::vector<glm::vec3> points);
 
-    glm::mat4 _modelView;
-    glm::mat4 _projection;
-    glm::mat4 _mvp;
+        void frontCameraView();
+        void rightCameraView();
+        void topCameraView();
+        bool toggleCameraProjectionType();
 
-    qreal _initialCameraDistance;
-    Vec _initialCameraPosition;
-    Vec _initialCameraUpVector;
+    private:
+        std::shared_ptr<Camera> _camera;
+        std::vector<Geometry*> _geometries;
+        std::shared_ptr<Light> _light;
+        std::shared_ptr<SpatialGrid> _grid;
 
-    bool _loaded;
-    float _moveSpeed;
+        glm::mat4 _modelView;
+        glm::mat4 _projection;
+        glm::mat4 _mvp;
 
-    uint _width;
-    uint _height;
+        qreal _initialCameraDistance;
+        Vec _initialCameraPosition;
+        Vec _initialCameraUpVector;
 
-    glm::vec3 _lookConstraints;
-};
+        bool _loaded;
+        float _moveSpeed;
+
+        uint _width;
+        uint _height;
+
+        glm::vec3 _lookConstraints;
+    };
+
+}
 
 #endif // SCENE_H
